@@ -11,4 +11,12 @@ sudoku = np.array(
     [0, 0, 0, 4, 1, 9, 0, 0, 5],
     [0, 0, 0, 0, 8, 0, 0, 7, 9]]    )       # Start array
 
+r = c = 0
+while sudoku[r][c] != 0:            # Loop through to sudoku until unsolved cell is found
+    if c == 8:                      # Skip to next row if end of row
+        c = 0
+        r += 1
+    else:
+        c += 1
+
 print(sudoku)
