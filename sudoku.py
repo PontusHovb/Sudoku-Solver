@@ -23,16 +23,19 @@ def find_unsolved_cell(sudoku):
     
     return r, c
 
-def guess(r, c, sudoku):
+def guess(r, c, sudoku, last_guess_r, last_guess_c):
     for guess_number in range(1,10):
         if valid_guess(r, c, guess_number, sudoku):
             sudoku[r][c] = guess_number
+            last_guess_r = r
+            last_guess_c = c
             print("------------------------------------------------")
             print(sudoku)
             r, c = find_unsolved_cell(sudoku)
-            guess(r, c, sudoku)
+            guess(r, c, sudoku, last_guess_r, last_guess_c)
     
     if sudoku[r][c] == 0:                                               # If no guess is possible
+        sudoku[last_guess_r][last_guess_c] = 0
         return
         
 
@@ -56,7 +59,7 @@ def valid_guess(r, c, guess, sudoku):
 def main():
     r, c = find_unsolved_cell(sudoku)
     print("cell", r, c)
-    guess(r, c, sudoku)
+    guess(r, c, sudoku, '', '')
 
 if __name__ == '__main__':
     main()
