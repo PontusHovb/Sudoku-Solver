@@ -23,10 +23,15 @@ def find_unsolved_cell(sudoku):
     
     return r, c
 
-def guess(r, c, sudoku):
+def guess(r, c, sudoku, guessed):
     for guess in range(1,10):
         if valid_guess(r, c, guess, sudoku):
-            print(guess)
+            guessed[r][c] = 1
+            sudoku[r][c] = guess
+            r, c = find_unsolved_cell(sudoku)
+            guess(r, c, sudoku, guessed)
+        else:
+            print("Stuck on ", r, c)
 
 def valid_guess(r, c, guess, sudoku):
     for check_row in range(0,9):                                        # Check if guess is in colummn
@@ -46,9 +51,11 @@ def valid_guess(r, c, guess, sudoku):
     return True
 
 def main():
+    guessed = np.zeros((9, 9))
+    print(guessed)
     r, c = find_unsolved_cell(sudoku)
     print("cell", r, c)
-    guess(r, c, sudoku)
+    guess(r, c, sudoku, guessed)
     print(sudoku)
 
 if __name__ == '__main__':
