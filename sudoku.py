@@ -37,15 +37,13 @@ def valid_guess(r, c, guess, sudoku):
         if sudoku[r][check_column] == guess and check_column != c:
             return False
 
-    for check_row in range(1, 4):                                       # Check if guess is in square
-        for check_column in range(1, 4):
+    for check_row in range(0, 3):                                       # Check if guess is in square
+        for check_column in range(0, 3):
             if r // 3 + check_row != r and c // 3 + check_column != c:
                 if sudoku[r // 3 + check_row][c // 3 + check_column] == guess:
                     return False
 
     return True
-    
-
 
 def main():
     r, c = find_unsolved_cell(sudoku)
