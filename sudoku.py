@@ -1,43 +1,55 @@
 import numpy as np
+import time
 
-sudoku = np.array(
-    [[5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9]]    )       # Start array
+FILENAME = "sudoku.csv"
+NO_PUZZLES = 1
 
+# Read quizzes from csv-file
+def read_quizzes(filename, size):
+    quizzes = np.zeros((size, 81), np.int32)
+    solutions = np.zeros((size, 81), np.int32)
 
-def find_unsolved_cell(sudoku):
-    r = c = 0
-    while sudoku[r][c] != 0:            # Loop through to sudoku until unsolved cell is found
-        if c == 8:                      # Skip to next row if end of row
-            c = 0
-            r += 1
-        else:
-            c += 1
+    for i, line in enumerate(open(filename, 'r').read().splitlines()[1:size+1]):
+        quiz, solution = line.split(",")
+        for j, q_s in enumerate(zip(quiz, solution)):
+            q, s = q_s
+            quizzes[i, j] = q
+            solutions[i, j] = s
+
+    quizzes = quizzes.reshape((-1, 9, 9))
+    solutions = solutions.reshape((-1, 9, 9))
+
+    return quizzes, solutions
+
+def first_unsolved_cell(sudoku):
+    for r, row in enumerate(sudoku):
+        for c, cell in enumerate(row):
+            if cell == 0:
+                return [r, c]
     
-    return r, c
+    return None                                 
+    
+def brute_force_solve(sudoku):
+    r, c = first_unsolved_cell(sudoku)
+    
+    if not first_unsolved_cell(sudoku):         # No empty cells, sudoku is solved
+        return True, sudoku
 
-def guess(r, c, sudoku, last_guess_r, last_guess_c):
-    for guess_number in range(1,10):
-        if valid_guess(r, c, guess_number, sudoku):
-            sudoku[r][c] = guess_number
-            last_guess_r = r
-            last_guess_c = c
-            print("------------------------------------------------")
+    for guess in range(0,9):                    
+        if valid_guess(r, c, guess, sudoku):    # Check if guess is valid
+            sudoku[r][c] = guess
+            print("----------------------------")
+            print(r,c,"->",guess)
             print(sudoku)
-            r, c = find_unsolved_cell(sudoku)
-            guess(r, c, sudoku, last_guess_r, last_guess_c)
-    
-    if sudoku[r][c] == 0:                                               # If no guess is possible
-        sudoku[last_guess_r][last_guess_c] = 0
-        return
-        
+            time.sleep(3)
+            if brute_force_solve(sudoku)[0]:    # Recursive solving
+                return True, sudoku
+            
+            sudoku[r][c] = 0                    # Backtrack if guess don't yield solution
+
+    return False, sudoku
+
+
 
 def valid_guess(r, c, guess, sudoku):
     for check_row in range(0,9):                                        # Check if guess is in colummn
@@ -57,9 +69,22 @@ def valid_guess(r, c, guess, sudoku):
     return True
 
 def main():
-    r, c = find_unsolved_cell(sudoku)
-    print("cell", r, c)
-    guess(r, c, sudoku, '', '')
+    start_time = time.time()
+
+    quizzes, solutions = read_quizzes(FILENAME, NO_PUZZLES)             # Get sudokus
+    download_end_time = time.time()
+    print(f"It took {download_end_time - start_time} seconds to download {NO_PUZZLES} sudokus")
+
+    # Solve each sudoku
+    for i, sudoku in enumerate(quizzes):
+        if brute_force_solve(sudoku)[0]:
+            print(brute_force_solve(sudoku)[1])
+        else:
+            print("No solution")
+
+    solve_end_time = time.time()
+    print(f"It took {solve_end_time - download_end_time} seconds to solve {NO_PUZZLES} sudokus")
+    
 
 if __name__ == '__main__':
     main()
