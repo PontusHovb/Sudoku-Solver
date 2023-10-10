@@ -2,7 +2,7 @@ import numpy as np
 import time
 
 FILENAME = "sudoku.csv"
-NO_PUZZLES = 1
+NO_PUZZLES = 1000
 
 # Read quizzes from csv-file
 def read_quizzes(filename, size):
@@ -21,35 +21,30 @@ def read_quizzes(filename, size):
 
     return quizzes, solutions
 
-def first_unsolved_cell(sudoku):
+def find_unsolved(sudoku):
     for r, row in enumerate(sudoku):
         for c, cell in enumerate(row):
             if cell == 0:
-                return [r, c]
+                return (r, c)
     
     return None                                 
     
-def brute_force_solve(sudoku):
-    r, c = first_unsolved_cell(sudoku)
+def backtrack_solve(sudoku):
+    empty = find_unsolved(sudoku)
     
-    if not first_unsolved_cell(sudoku):         # No empty cells, sudoku is solved
-        return True, sudoku
+    if not empty:                           # No empty cells, sudoku is solved
+        return True
 
-    for guess in range(0,9):                    
-        if valid_guess(r, c, guess, sudoku):    # Check if guess is valid
-            sudoku[r][c] = guess
-            print("----------------------------")
-            print(r,c,"->",guess)
-            print(sudoku)
-            time.sleep(3)
-            if brute_force_solve(sudoku)[0]:    # Recursive solving
-                return True, sudoku
+    for guess in range(1,10):                    
+        if valid_guess(empty[0], empty[1], guess, sudoku):  # Check if guess is valid
+            sudoku[empty[0]][empty[1]] = guess
+
+            if backtrack_solve(sudoku):                     # Recursive solving
+                return True
             
-            sudoku[r][c] = 0                    # Backtrack if guess don't yield solution
+            sudoku[empty[0]][empty[1]] = 0                  # Backtrack if guess don't yield solution
 
-    return False, sudoku
-
-
+    return False
 
 def valid_guess(r, c, guess, sudoku):
     for check_row in range(0,9):                                        # Check if guess is in colummn
@@ -77,8 +72,8 @@ def main():
 
     # Solve each sudoku
     for i, sudoku in enumerate(quizzes):
-        if brute_force_solve(sudoku)[0]:
-            print(brute_force_solve(sudoku)[1])
+        if backtrack_solve(sudoku):
+            pass
         else:
             print("No solution")
 
