@@ -72,10 +72,10 @@ def main():
 
     # Solve each sudoku
     for i, sudoku in enumerate(quizzes):
-        if backtrack_solve(sudoku):
+        if backtrack_solve(sudoku) and sudoku == solutions[i]:
             pass
         else:
-            print("No solution")
+            raise ValueError
 
     solve_end_time = time.time()
     print(f"It took {solve_end_time - download_end_time} seconds to solve {NO_PUZZLES} sudokus")
