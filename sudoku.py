@@ -2,7 +2,7 @@ import numpy as np
 import time
 
 FILENAME = "sudoku.csv"
-NO_PUZZLES = 100
+NO_PUZZLES = 1
 
 # Read quizzes from csv-file
 def read_quizzes(filename, size):
@@ -30,6 +30,23 @@ def find_unsolved(sudoku):
     
     return None                                 
 
+def valid_guess(r, c, guess, sudoku):
+    for check_row in range(0,9):                                        # Check if guess is in colummn
+        if sudoku[check_row][c] == guess and check_row != r:
+            return False
+    
+    for check_column in range(0,9):                                     # Check if guess is in row
+        if sudoku[r][check_column] == guess and check_column != c:
+            return False
+
+    for check_row in range(0, 3):                                       # Check if guess is in square
+        for check_column in range(0, 3):
+            if (r // 3)*3 + check_row != r and (c // 3)*3 + check_column != c:
+                if sudoku[(r // 3)*3 + check_row][(c // 3)*3 + check_column] == guess:
+                    return False
+
+    return True
+
 # Backtrack solve
 def backtrack_solve(sudoku):
     empty = find_unsolved(sudoku)
@@ -48,25 +65,22 @@ def backtrack_solve(sudoku):
 
     return False
 
-def valid_guess(r, c, guess, sudoku):
-    for check_row in range(0,9):                                        # Check if guess is in colummn
-        if sudoku[check_row][c] == guess and check_row != r:
-            return False
-    
-    for check_column in range(0,9):                                     # Check if guess is in row
-        if sudoku[r][check_column] == guess and check_column != c:
-            return False
+# Brute force solve
+def bruteforce_solve(sudoku):
+    empty = find_unsolved(sudoku)
 
-    for check_row in range(0, 3):                                       # Check if guess is in square
-        for check_column in range(0, 3):
-            if (r // 3)*3 + check_row != r and (c // 3)*3 + check_column != c:
-                if sudoku[(r // 3)*3 + check_row][(c // 3)*3 + check_column] == guess:
-                    return False
-
-    return True
+    if not empty:
+        check_correct(sudoku)
+    for guess in range(1,10):
+        sudoku[empty[0]][empty[1]] = guess
+        bruteforce_solve(sudoku)
 
 
 def main():
+    quizzes, solutions = read_quizzes(FILENAME, NO_PUZZLES)
+    print(quizzes)
+
+def main2():
     start_time = time.time()
 
     quizzes, solutions = read_quizzes(FILENAME, NO_PUZZLES)                 # Get sudokus
