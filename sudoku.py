@@ -2,7 +2,7 @@ import numpy as np
 import time
 
 FILENAME = "sudoku.csv"
-NO_PUZZLES = 1
+NO_PUZZLES = 1000
 
 # Read quizzes from csv-file
 def read_quizzes(filename, size):
@@ -30,6 +30,15 @@ def find_unsolved(sudoku):
     
     return None                                 
 
+def get_all_unsolved(sudoku):
+    unsolved_cells = list()
+    for r, row in enumerate(sudoku):
+        for c, cell in enumerate(row):
+            if cell == 0:
+                unsolved_cells.append((r, c))
+    
+    return unsolved_cells    
+
 def valid_guess(r, c, guess, sudoku):
     for check_row in range(0,9):                                        # Check if guess is in colummn
         if sudoku[check_row][c] == guess and check_row != r:
@@ -48,39 +57,53 @@ def valid_guess(r, c, guess, sudoku):
     return True
 
 # Backtrack solve
-def backtrack_solve(sudoku):
-    empty = find_unsolved(sudoku)
-    
-    if not empty:                                                       # No empty cells, sudoku is solved
+def backtrack_solve(sudoku, empty_cells):
+    # Sudoku solved if there are no empty cells left
+    if len(empty_cells) == 0:
         return True
+
+    empty = empty_cells[0]
 
     for guess in range(1,10):                    
         if valid_guess(empty[0], empty[1], guess, sudoku):              # Check if guess is valid
             sudoku[empty[0]][empty[1]] = guess
 
-            if backtrack_solve(sudoku):                                 # Recursive solving
+            if backtrack_solve(sudoku, empty_cells[1:]):                # Recursive solving
                 return True
             
             sudoku[empty[0]][empty[1]] = 0                              # Backtrack if guess don't yield solution
 
     return False
 
-# Brute force solve
-def bruteforce_solve(sudoku):
-    empty = find_unsolved(sudoku)
+# Candidate-checking method
+def candidate_checking_method(sudoku, empty_cells):
+    # Sudoku solved if there are no empty cells left
+    if len(empty_cells) == 0:
+        return True
+    
+    # Loop through all empty cells
+    for empty_cell in empty_cells:
+        possible_values = 0
+        for guess in range(1, 10):
+            if valid_guess(empty_cell[0], empty_cell[1], guess, sudoku):
+                possible_guess = guess
+                possible_values += 1
 
-    if not empty:
-        check_correct(sudoku)
-    for guess in range(1,10):
-        sudoku[empty[0]][empty[1]] = guess
-        bruteforce_solve(sudoku)
+        # If there is only one candidate for empty cell
+        if possible_values == 1:
+            sudoku[empty_cell[0]][empty_cell[1]] = possible_guess
+            empty_cells.remove(empty_cell)
+            return candidate_checking_method(sudoku, empty_cells)
 
+    # Correct value can't be determined for any empty cell
+    return False
+
+
+def solve_sudoku(sudoku):
+    empty_cells = get_all_unsolved(sudoku)
+    return candidate_checking_method(sudoku, empty_cells)
 
 def main():
-    quizzes, solutions = read_quizzes(FILENAME, NO_PUZZLES)
-    print(quizzes)
-
-def main2():
     start_time = time.time()
 
     quizzes, solutions = read_quizzes(FILENAME, NO_PUZZLES)                 # Get sudokus
@@ -88,15 +111,13 @@ def main2():
     print(f"It took {download_end_time - start_time} seconds to download {NO_PUZZLES} sudokus")
 
     # Solve each sudoku
+    solved_sudokus = 0
     for sudoku in quizzes:
-        if backtrack_solve(sudoku):
-            pass
-        else:
-            print("Sudoku wasn't solved")
-            exit()
+        if solve_sudoku(sudoku):
+            solved_sudokus += 1
 
     solve_end_time = time.time()
-    print(f"It took {solve_end_time - download_end_time} seconds to solve {NO_PUZZLES} sudokus")
+    print(f"Method solved {round(solved_sudokus / NO_PUZZLES, 2)*100}% of {NO_PUZZLES} sudokus in {solve_end_time - download_end_time} seconds")
     
 if __name__ == '__main__':
     main()
