@@ -1,7 +1,8 @@
 import numpy as np
 import time
+from itertools import combinations
 
-FILENAME = "input_sudoku.csv"
+FILENAME = "sudoku.csv"
 NO_PUZZLES = 1
 
 # Read quizzes from csv-file
@@ -34,21 +35,40 @@ def get_all_unsolved(sudoku):
 
 # Check if a guess is valid
 def valid_guess(r, c, guess, sudoku):
-    for check_row in range(0,9):                                        # Check if guess is in colummn
-        if sudoku[check_row][c] == guess and check_row != r:
-            return False
+    # Check if guess is in column
+    if guess in sudoku[r] and c != sudoku[r].index(guess):
+        return False
     
-    for check_column in range(0,9):                                     # Check if guess is in row
-        if sudoku[r][check_column] == guess and check_column != c:
-            return False
+    # Check if guess is in row
+    if guess in [sudoku[i][c] for i in range(9)] and r != [sudoku[i][c] for i in range(9)].index(guess):
+        return False
 
-    for check_row in range(0, 3):                                       # Check if guess is in square
-        for check_column in range(0, 3):
-            if (r // 3)*3 + check_row != r and (c // 3)*3 + check_column != c:
-                if sudoku[(r // 3)*3 + check_row][(c // 3)*3 + check_column] == guess:
-                    return False
+    # Check if guess is in square
+    start_row, start_col = 3 * (r // 3), 3 * (c // 3)
+    for check_row in range(start_row, start_row + 3):
+        for check_col in range(start_col, start_col + 3):
+            if sudoku[check_row][check_col] == guess and (check_row, check_col) != (r, c):
+                return False
 
     return True
+
+def get_candidates(sudoku, row, column):
+    candidates = set(range(1, 10))
+
+    # Eliminate candidates in same row
+    candidates -= set(sudoku[row])
+
+    # Eliminate candidates in same column
+    candidates -= set(sudoku[i][column] for i in range(9))
+
+    # Eliminate candidates in same box
+    block_row, block_col = 3 * (row // 3), 3 * (column // 3)
+    for i in range(3):
+        for j in range(3):
+            candidates.discard(sudoku[block_row + i][block_col + j])
+
+    return candidates
+
 
 ###############################################################################################################################
 ########################################                  Algorithms                   ########################################
@@ -105,32 +125,28 @@ def place_finding(sudoku, solution, empty_cells):
         return True
     
     for empty_cell in empty_cells:                                          # Loop through all empty cells
-        candidates = set(range(1, 10))
+        candidates = get_candidates(sudoku, empty_cell[0, empty_cell[1]])
 
-        # Eliminate candidates in same row
-        candidates -= set(sudoku[empty_cell[0]])
-
-        # Eliminate candidates in same column
-        candidates -= set(sudoku[i][empty_cell[1]] for i in range(9))
-
-        # Eliminate candidates in same box
-        block_row, block_col = 3 * (empty_cell[0] // 3), 3 * (empty_cell[1] // 3)
-        for i in range(3):
-            for j in range(3):
-                candidates.discard(sudoku[block_row + i][block_col + j])
-
-        # Hidden single if there is only one candidate left
-        if len(candidates) == 1:
+        if len(candidates) == 1:                                            # Hidden single if there is only one candidate left
             sudoku[empty_cell[0]][empty_cell[1]] = candidates.pop()
             empty_cells.remove(empty_cell)   
             return candidate_checking(sudoku, solution, empty_cells)
     
     return False
 
+def crooks(sudoku, solution, empty_cells):
+
+    # Find naked pairs in row
+    for row in range(9):
+        empty_cells_in_row = set((a, b) for (a, b) in empty_cells if a == row)
+        print(empty_cells_in_row)
+    
+    list(combinations(empty_cells, 2))
+
 # Choose which algorithm to use
 def solve_sudoku(sudoku, solution):                                         
     empty_cells = get_all_unsolved(sudoku)
-    return bruteforce_lookahead(sudoku, solution, empty_cells)              
+    return crooks(sudoku, solution, empty_cells)              
 
 def main():
     start_time = time.time()
