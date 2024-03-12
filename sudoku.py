@@ -2,7 +2,7 @@ import numpy as np
 import time
 from itertools import combinations
 
-FILENAME = "sudoku.csv"
+FILENAME = "hard_sudoku.csv"
 NO_PUZZLES = 1
 
 # Read quizzes from csv-file
@@ -134,19 +134,10 @@ def place_finding(sudoku, solution, empty_cells):
     
     return False
 
-def crooks(sudoku, solution, empty_cells):
-
-    # Find naked pairs in row
-    for row in range(9):
-        empty_cells_in_row = set((a, b) for (a, b) in empty_cells if a == row)
-        print(empty_cells_in_row)
-    
-    list(combinations(empty_cells, 2))
-
 # Choose which algorithm to use
 def solve_sudoku(sudoku, solution):                                         
     empty_cells = get_all_unsolved(sudoku)
-    return crooks(sudoku, solution, empty_cells)              
+    return place_finding(sudoku, solution, empty_cells)              
 
 def main():
     start_time = time.time()
