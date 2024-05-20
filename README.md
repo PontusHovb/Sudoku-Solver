@@ -1,5 +1,5 @@
 # Sudoku
-Testing different algorithms for solving Sudoku.
+Testing different algorithms and code languages for solving the game Sudoku.
 
 Algorithms are tested on 1 million Sudoku games accessible through Kaggle (https://www.kaggle.com/datasets/bryanpark/sudoku)
 
