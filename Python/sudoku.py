@@ -5,8 +5,8 @@ import os
 from solver import Sudoku
 
 FILENAME = "sudoku.csv"
-ALGORITHM = "bruteforce"
-NO_PUZZLES = 1
+ALGORITHM = "bruteforce_lookahead"
+NO_PUZZLES = 1000
 SIZE = 9
  
 # Read puzzles from csv-file

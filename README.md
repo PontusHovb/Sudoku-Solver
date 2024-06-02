@@ -11,11 +11,11 @@ Algorithms are tested on a various of parameters:
 
 ## Average time
 The average time to solve a sudoku with each of the algorithms were as followed:
-| Algorithm               | Python  | C |
-|-------------------------|---------|---|
-| Bruteforce w. lookahead | 18.3 ms |   |
-| Place-finding           | 22.5 ms |   |
-| Candidate-checking      | 23.4 ms |   |
+| Algorithm               | Python   | C        |
+|-------------------------|----------|----------|
+| Bruteforce w. lookahead | 18.3 ms  | 0.073 ms |
+| Place-finding           | 22.5 ms  |          |
+| Candidate-checking      | 23.4 ms  |          |
 
 # Algorithms
 ## Brute-force method
