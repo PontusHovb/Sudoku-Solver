@@ -1,10 +1,11 @@
 import numpy as np
 import time
+import random
 from solver import Sudoku
 
-FILENAME = "easy_sudoku.csv"
+FILENAME = "sudoku.csv"
 ALGORITHM = "candidate_checking"
-NO_PUZZLES = 1
+NO_PUZZLES = 100
 SIZE = 9
  
 # Read puzzles from csv-file
@@ -12,7 +13,13 @@ def read_puzzles(filename, no_puzzles):
     puzzles = np.zeros((no_puzzles, SIZE*SIZE), np.int32)
     solutions = np.zeros((no_puzzles, SIZE*SIZE), np.int32)
 
-    for i, line in enumerate(open(filename, 'r').read().splitlines()[1:no_puzzles+1]):
+    with open(filename, 'r') as csv_file:
+        all_sudokus = csv_file.read().splitlines()
+        if len(all_sudokus) + 1 < NO_PUZZLES:
+            raise ValueError("There are not enough puzzles in file")
+    
+    sudokus = random.sample(all_sudokus[1:], k=no_puzzles)
+    for i, line in enumerate(sudokus):
         puzzle, solution = line.split(",")
         for j, q_s in enumerate(zip(puzzle, solution)):
             q, s = q_s
@@ -34,8 +41,8 @@ def main():
     solved_sudokus = 0
     for puzzle, solution in zip(puzzles, solutions):
         sudoku = Sudoku(puzzle, solution)
-
         sudoku.solve(ALGORITHM)
+        
         if sudoku.correct_solution():
             solved_sudokus += 1
 
