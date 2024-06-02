@@ -83,6 +83,8 @@ class Sudoku:
             
             puzzle[empty_cells[0][0]][empty_cells[0][1]] = 0                    # Backtrack if guess don't yield solution
 
+        return False
+    
     def bruteforce_lookahead(self, puzzle, empty_cells):
         if len(empty_cells) == 0:                                     
             return True if self.correct_solution() else False
@@ -95,6 +97,8 @@ class Sudoku:
                     return True
                     
                 puzzle[empty_cells[0][0]][empty_cells[0][1]] = 0                # Backtrack if guess don't yield solution
+
+        return False
 
     def candidate_checking(self, puzzle, empty_cells):
         if len(empty_cells) == 0:                                               # puzzle solved if there are no more empty cells left
