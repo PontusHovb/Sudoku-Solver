@@ -4,22 +4,17 @@ import random
 import os
 from solver import Sudoku
 
-FILENAME = "sudoku.csv"
+FILENAME = "../Data/sudoku.csv"
 ALGORITHM = "bruteforce_lookahead"
 NO_PUZZLES = 1000
 SIZE = 9
  
 # Read puzzles from csv-file
 def read_puzzles(filename, no_puzzles):
-    # Get path of file
-    current_script_dir = os.path.abspath(os.path.dirname(__file__))
-    parent_dir = os.path.abspath(os.path.join(current_script_dir, os.pardir))
-    filepath = os.path.join(parent_dir, f"Data/{filename}")
-
     puzzles = np.zeros((no_puzzles, SIZE*SIZE), np.int32)
     solutions = np.zeros((no_puzzles, SIZE*SIZE), np.int32)
 
-    with open(filepath, 'r') as csv_file:
+    with open(filename, 'r') as csv_file:
         all_sudokus = csv_file.read().splitlines()
         if len(all_sudokus) + 1 < NO_PUZZLES:
             raise ValueError("There are not enough puzzles in file")
