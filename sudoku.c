@@ -4,20 +4,23 @@
 #include <ctype.h>
 #include <time.h>
 
-#define FILENAME "hard_sudoku.csv"
+#define FILENAME "sudoku.csv"
 #define NO_PUZZLES 1
 #define SIZE 9
 
 // Function declarations
-int read_quizzes(const char* filename, int puzzles, int sudoku[NO_PUZZLES][SIZE][SIZE], int solution[NO_PUZZLES][SIZE][SIZE]);
+int read_quizzes(const char* filename, int puzzles, int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
 void print_sudoku(int sudoku[SIZE][SIZE]);
-int solve_sudoku(int sudoku[SIZE][SIZE], int row, int col);
-int is_valid(int sudoku[SIZE][SIZE], int guess, int row, int col);
-int find_unassigned_location(int sudoku[SIZE][SIZE], int *row, int *col);
+int correct_solution(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
+int get_all_unsolved(int (*sudoku)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2]);
+int solve_sudoku(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
+int bruteforce(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells);
+int bruteforce_lookahead(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells);
+int validGuess(int r, int c, int guess, int (*sudoku)[SIZE][SIZE]);
 
 int main() {
-    int quizzes[NO_PUZZLES][SIZE][SIZE] = {0};
-    int solutions[NO_PUZZLES][SIZE][SIZE] = {0};
+    int (*quizzes)[SIZE][SIZE] = malloc(NO_PUZZLES * sizeof(*quizzes));
+    int (*solutions)[SIZE][SIZE] = malloc(NO_PUZZLES * sizeof(*solutions));
     int solved_sudokus = 0;
 
     // Load all sudokus
@@ -28,62 +31,54 @@ int main() {
 
     // Solve all sudokus
     for (int i = 0; i < count; i++) {
-        print_sudoku(quizzes[i]);
-        printf("\n\n");
-        if (solve_sudoku(quizzes[i], 0, 0)) {
+        if (solve_sudoku(&quizzes[i], &solutions[i]) == 1) {
             solved_sudokus++;
-            printf("Sudoku %d solved!\n", i + 1);
-            print_sudoku(quizzes[i]);
-        } else {
-            printf("Sudoku %d not solved!\n", i + 1);
-        }
-    }
+        } 
+    }  
 
     clock_t solve_end_time = clock();
     printf("Method solved %f%% of %d sudokus in %f seconds.\n",
            (double)solved_sudokus / NO_PUZZLES * 100, NO_PUZZLES,
            (double)(solve_end_time - download_end_time) / CLOCKS_PER_SEC);
 
-    return 0;
+    free(quizzes);
+    free(solutions);
+    return 1;
 }
 
-int read_quizzes(const char* filename, int puzzles, int sudoku[NO_PUZZLES][SIZE][SIZE], int solution[NO_PUZZLES][SIZE][SIZE]) {
+int read_quizzes(const char* filename, int puzzles, int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]) {
+    // Handle missing / corrupted file
     FILE *file = fopen(filename, "r");
     if (!file) {
         printf("Error opening file\n");
         return 0;
     }
 
-    char line[256];
-    int puzzle_count = 0;
-    while (fgets(line, sizeof(line), file) && puzzle_count < puzzles) {
-        char* token = strtok(line, ",");
-        if (token != NULL) {
-            for (int row = 0; row < SIZE; row++) {
-                for (int col = 0; col < SIZE; col++) {
-                    int index = row * SIZE + col;
-                    printf("%c", token[index]);
-                    // Only process numeric input for the puzzle
-                    if (isdigit(token[index])) {
-                        sudoku[puzzle_count][row][col] = token[index] - '0';
-                    } else {
-                        sudoku[puzzle_count][row][col] = 0;  // Non-numeric input is handled as '0'
-                    }
-                    // Only process numeric input for the solution
-                    int solution_index = SIZE * SIZE + 1 + index; // assuming there is exactly one character (comma) separator
-                    if (isdigit(token[solution_index])) {
-                        solution[puzzle_count][row][col] = token[solution_index] - '0';
-                    } else {
-                        solution[puzzle_count][row][col] = 0;  // Non-numeric input is handled as '0'
-                    }
-                }
-            }
-            puzzle_count++;
+    char line[1024];
+    int puzzleCount = 0;
+    int first_line = 1;
+
+    // Read all sudokus
+    while (fgets(line, sizeof(line), file) && puzzleCount < puzzles) {
+        if (first_line) {
+            first_line = 0;
+            continue;
         }
+
+        char *input_sudoku = strtok(line, ",");
+        char *input_solution = strtok(NULL, "\n");
+
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                sudoku[puzzleCount][i][j] = input_sudoku[i * SIZE + j] - '0';
+                solution[puzzleCount][i][j] = input_solution[i * SIZE + j] - '0';
+            }
+        }
+        puzzleCount++;
     }
 
     fclose(file);
-    return puzzle_count;
+    return puzzleCount;
 }
 
 void print_sudoku(int sudoku[SIZE][SIZE]) {
@@ -95,43 +90,113 @@ void print_sudoku(int sudoku[SIZE][SIZE]) {
     }
 }
 
-int solve_sudoku(int sudoku[SIZE][SIZE], int row, int col) {
-    int r, c;
-
-    if (!find_unassigned_location(sudoku, &r, &c)) {
-        return 1;  // Success!
-    }
-
-    for (int num = 1; num <= 9; num++) {
-        if (is_valid(sudoku, num, r, c)) {
-            sudoku[r][c] = num;
-
-            if (solve_sudoku(sudoku, r, c)) {
-                return 1;
+// Check if solution is correct
+int correct_solution(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]) {
+    for (int row = 0; row < SIZE; row++) {
+        for (int col = 0; col < SIZE; col++) {
+            if ((*sudoku)[row][col] != (*solution)[row][col]) {
+                return 0;
             }
-
-            sudoku[r][c] = 0;  // Backtrack
         }
     }
-    return 0;  // This triggers backtracking
+    return 1;
 }
 
-int find_unassigned_location(int sudoku[SIZE][SIZE], int *row, int *col) {
-    for (*row = 0; *row < SIZE; (*row)++) {
-        for (*col = 0; *col < SIZE; (*col)++) {
-            if (sudoku[*row][*col] == 0) {
-                return 1;
-            }
+int bruteforce(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells) {
+    if (unsolved_index == no_unsolved_cells) {
+        if (correct_solution(sudoku, solution) == 1) {
+            return 1;
+        }
+        else {
+            return 0;
         }
     }
+
+    for (int num = 1; num <= 9; num++) {                                                                    // If empty cells left, make a guess for first empty cell
+        (*sudoku)[(*unsolved_cells)[unsolved_index][0]][(*unsolved_cells)[unsolved_index][1]] = num;
+
+        if (bruteforce(sudoku, solution, unsolved_cells, unsolved_index+1, no_unsolved_cells) == 1) {       // Recursive solving
+            return 1;
+        }
+
+        (*sudoku)[(*unsolved_cells)[unsolved_index][0]][(*unsolved_cells)[unsolved_index][1]] = 0;          // Backtrack if guess don't yield solution
+    }
+
     return 0;
 }
 
-int is_valid(int sudoku[SIZE][SIZE], int guess, int row, int col) {
-    for (int i = 0; i < SIZE; i++) {
-        if (sudoku[row][i] == guess) return 0;  // Check row
-        if (sudoku[i][col] == guess) return 0;  // Check column
-        if (sudoku[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == guess) return 0;  // Check box
+int bruteforce_lookahead(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells) {
+    if (unsolved_index == no_unsolved_cells) {
+        if (correct_solution(sudoku, solution) == 1) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
     }
+
+    for (int guess = 1; guess <= 9; guess++) {                                                                    // If empty cells left, make a guess for first empty cell
+        if (validGuess((*unsolved_cells)[unsolved_index][0], (*unsolved_cells)[unsolved_index][1], guess, sudoku)) {
+            (*sudoku)[(*unsolved_cells)[unsolved_index][0]][(*unsolved_cells)[unsolved_index][1]] = guess;
+
+            if (bruteforce_lookahead(sudoku, solution, unsolved_cells, unsolved_index+1, no_unsolved_cells) == 1) {       // Recursive solving
+                return 1;
+            }
+            
+            (*sudoku)[(*unsolved_cells)[unsolved_index][0]][(*unsolved_cells)[unsolved_index][1]] = 0;          // Backtrack if guess don't yield solution
+        }
+    }
+
+    return 0;
+}
+
+int get_all_unsolved(int (*sudoku)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2]) {
+    int no_unsolved_cells = 0;  // Initialize the count of unsolved cells
+    for (int row = 0; row < SIZE; row++) {
+        for (int col = 0; col < SIZE; col++) {
+            if ((*sudoku)[row][col] == 0) {
+                (*unsolved_cells)[no_unsolved_cells][0] = row;
+                (*unsolved_cells)[no_unsolved_cells][1] = col;
+                no_unsolved_cells++;
+            }
+        }
+    }
+    return no_unsolved_cells;
+}
+
+int validGuess(int r, int c, int guess, int (*sudoku)[SIZE][SIZE]) {
+    // Check if guess is in row
+    for (int i = 0; i < SIZE; i++) {
+        if ((*sudoku)[r][i] == guess && i != c) {
+            return 0;
+        }
+    }
+
+    // Check if guess is in column
+    for (int i = 0; i < SIZE; i++) {
+        if ((*sudoku)[i][c] == guess && i != r) {
+            return 0;
+        }
+    }
+
+    // Check if guess is in the 3x3 square
+    int start_row = 3 * (r / 3);
+    int start_col = 3 * (c / 3);
+    for (int row = start_row; row < start_row + 3; row++) {
+        for (int col = start_col; col < start_col + 3; col++) {
+            if ((*sudoku)[row][col] == guess && row != r && col != c) {
+                return 0;
+            }
+        }
+    }
+
     return 1;
+}
+
+// Choose which algorithm to use
+int solve_sudoku(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]) {
+    int unsolved_cells[SIZE*SIZE][2] = {{0}};;
+    int unsolved_index = 0;
+    int no_unsolved_cells = get_all_unsolved(sudoku, &unsolved_cells);
+    return bruteforce(sudoku, solution, &unsolved_cells, unsolved_index, no_unsolved_cells);
 }
