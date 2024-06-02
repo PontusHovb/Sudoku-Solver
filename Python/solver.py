@@ -18,8 +18,8 @@ class Sudoku:
             print('\n', end='')
             
     def solve(self, method):
-        if method == "bruteforce":                                       
-            return self.bruteforce(self.puzzle, self.unsolved_cells)
+        if method == "bruteforce":                               
+            return self.bruteforce(self.puzzle, self.unsolved_cells, len(self.unsolved_cells))
         elif method == "bruteforce_lookahead":
             return self.bruteforce_lookahead(self.puzzle, self.unsolved_cells)
         elif method == "candidate_checking":
@@ -71,14 +71,14 @@ class Sudoku:
 
         return candidates
 
-    def bruteforce(self, puzzle, empty_cells): 
+    def bruteforce(self, puzzle, empty_cells):
         if len(empty_cells) == 0:
             return True if self.correct_solution() else False
                
         for guess in range(1,10):                                               # If empty cells left, make a guess for first empty cell
             puzzle[empty_cells[0][0]][empty_cells[0][1]] = guess
 
-            if self.bruteforce(puzzle, empty_cells[1:]):                        # Recursive solving
+            if self.bruteforce(puzzle, empty_cells[1:], total_empty_cells):                        # Recursive solving
                 return True
             
             puzzle[empty_cells[0][0]][empty_cells[0][1]] = 0                    # Backtrack if guess don't yield solution
