@@ -5,6 +5,8 @@ class Sudoku:
         self.puzzle = puzzle
         self.solution = solution
         self.unsolved_cells = self.get_all_unsolved(self.puzzle)
+        self.no_unsolved_cells = len(self.unsolved_cells)
+        self.guesses = 0
 
     def __str__(self):
         for r, row in enumerate(self.puzzle):
@@ -20,13 +22,15 @@ class Sudoku:
     def solve(self, method):
         match method:
             case "bruteforce":                               
-                return self.bruteforce(self.puzzle, self.unsolved_cells, len(self.unsolved_cells))
+                self.bruteforce(self.puzzle, self.unsolved_cells, len(self.unsolved_cells))
             case "bruteforce_lookahead":
-                return self.bruteforce_lookahead(self.puzzle, self.unsolved_cells)
+                self.bruteforce_lookahead(self.puzzle, self.unsolved_cells)
             case "candidate_checking":
-                return self.candidate_checking(self.puzzle, self.unsolved_cells)
+                self.candidate_checking(self.puzzle, self.unsolved_cells)
             case _:
                 print("Enter valid algorithm")
+
+        return self.guesses - self.no_unsolved_cells
     
     def correct_solution(self):
         return np.array_equal(self.puzzle, self.solution)
@@ -76,8 +80,9 @@ class Sudoku:
                
         for guess in range(1,10):                                               # If empty cells left, make a guess for first empty cell
             puzzle[empty_cells[0][0]][empty_cells[0][1]] = guess
+            self.guesses += 1
 
-            if self.bruteforce(puzzle, empty_cells[1:], total_empty_cells):                        # Recursive solving
+            if self.bruteforce(puzzle, empty_cells[1:]):                        # Recursive solving
                 return True
             
             puzzle[empty_cells[0][0]][empty_cells[0][1]] = 0                    # Backtrack if guess don't yield solution
@@ -91,6 +96,7 @@ class Sudoku:
         for guess in range(1, 10):                                              # If empty cells left, make a guess for first empty cell
             if self.valid_guess(empty_cells[0][0], empty_cells[0][1], guess, puzzle):
                 puzzle[empty_cells[0][0]][empty_cells[0][1]] = guess
+                self.guesses += 1
 
                 if self.bruteforce_lookahead(puzzle, empty_cells[1:]):          # Recursive solving
                     return True
@@ -112,6 +118,7 @@ class Sudoku:
 
             if possible_values == 1:                                            # If there is only one candidate for empty cell
                 puzzle[empty_cell[0]][empty_cell[1]] = possible_guess
+                self.guesses += 1
                 empty_cells.remove(empty_cell)
                 return self.candidate_checking(puzzle, empty_cells)
 

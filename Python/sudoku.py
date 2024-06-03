@@ -5,7 +5,7 @@ import os
 from solver import Sudoku
 
 FILENAME = "../Data/sudoku.csv"
-ALGORITHM = "candidate_checking"
+ALGORITHM = "bruteforce_lookahead"
 NO_PUZZLES = 1000
 SIZE = 9
  
@@ -40,15 +40,18 @@ def main():
 
     # Solve each sudoku
     solved_sudokus = 0
+    total_misses = 0
     for puzzle, solution in zip(puzzles, solutions):
         sudoku = Sudoku(puzzle, solution)
-        sudoku.solve(ALGORITHM)
+        misses = sudoku.solve(ALGORITHM)
         
         if sudoku.correct_solution():
             solved_sudokus += 1
+            total_misses += misses
 
     solve_end_time = time.time()
     print(f"Method solved {round(solved_sudokus / NO_PUZZLES, 2)*100}% of {NO_PUZZLES} sudokus in {round(solve_end_time - download_end_time, 4)} seconds")
+    print(f"Method averaged {total_misses / solved_sudokus} misses per solved sudoku")
 
 if __name__ == '__main__':
     main()

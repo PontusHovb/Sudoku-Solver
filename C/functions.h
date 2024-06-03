@@ -1,5 +1,5 @@
 #define FILENAME "../Data/sudoku.csv"
-#define NO_PUZZLES 10000
+#define NO_PUZZLES 1000000
 #define SIZE 9
 #define ALGORITHM "BruteforceLookAhead"
 
