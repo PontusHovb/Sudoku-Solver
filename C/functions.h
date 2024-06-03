@@ -1,7 +1,7 @@
 #define FILENAME "../Data/sudoku.csv"
 #define NO_PUZZLES 10000
 #define SIZE 9
-#define ALGORITHM "bruteforce_lookahead"
+#define ALGORITHM "BruteforceLookAhead"
 
 #ifndef solver_h
 #define solver_h
@@ -12,16 +12,16 @@
 #include <ctype.h>
 #include <time.h>
 
-int read_quizzes(const char* filename, int puzzles, int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
-void print_sudoku(int (*sudoku)[SIZE][SIZE]);
+int ReadQuizzes(const char* filename, int puzzles, int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
+void PrintSudoku(int (*sudoku)[SIZE][SIZE]);
 
-int correct_solution(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
-int get_candidates(int (*sudoku)[SIZE][SIZE], int row, int col);
-int get_all_unsolved(int (*sudoku)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2]);
-int solve_sudoku(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
-int bruteforce(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells);
-int bruteforce_lookahead(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells);
-int candidate_checking(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells);
-int validGuess(int r, int c, int guess, int (*sudoku)[SIZE][SIZE]);
+int CorrectSolution(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
+int GetCandidates(int (*sudoku)[SIZE][SIZE], int row, int col);
+int GetAllUnsolved(int (*sudoku)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2]);
+int SolveSudoku(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
+int Bruteforce(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int unsolved_index, int noUnsolvedCells);
+int BruteforceLookAhead(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int unsolved_index, int noUnsolvedCells);
+int CandidateChecking(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int unsolved_index, int noUnsolvedCells);
+int ValidGuess(int row, int col, int guess, int (*sudoku)[SIZE][SIZE]);
 
 #endif
