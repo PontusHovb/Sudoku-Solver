@@ -11,11 +11,10 @@ Algorithms are tested on a various of parameters:
 
 ## Average time
 The average time to solve a sudoku with each of the algorithms were as followed:
-| Algorithm               | Python   | C        |
-|-------------------------|----------|----------|
-| Bruteforce w. lookahead | 18.3 ms  | 0.073 ms |
-| Place-finding           | 22.5 ms  |          |
-| Candidate-checking      | 23.4 ms  |          |
+| Algorithm               | Python | C       | C vs. Python |
+|-------------------------|--------|---------|--------------|
+| Bruteforce w. lookahead | 14 ms  | 0.03 ms | -99.8%       |
+| Candidate-checking      | 25 ms  | 0.05 ms | -99.8%       |
 
 # Algorithms
 ## Brute-force method
@@ -27,10 +26,6 @@ This is the simpliest method for solving sudokus numerically and is therefore se
 The candidate checking method for solving sudokus involve writing down all possible values for each empty cell.
 For each cell where there is only one possible value, that value must be the correct value and is inserted, and the rest of the empty cells are then updated.
 Naked single
- 
-## Place-finding method
-The place-finding method iterates through 1 to 9 and tries finding rows, columns or boxes where there is only one possible position for one value.
-Hidden single
 
 ## Crook's algorithm
 Crook's algorithm starts by using the candidate-checking and place-finding methods to solve these cells that can be solved with either of these methods. When no more cells can be sovled with these methods the backtracking method is used to solve the remaining cells.

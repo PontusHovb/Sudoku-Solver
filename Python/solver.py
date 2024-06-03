@@ -24,8 +24,6 @@ class Sudoku:
             return self.bruteforce_lookahead(self.puzzle, self.unsolved_cells)
         elif method == "candidate_checking":
             return self.candidate_checking(self.puzzle, self.unsolved_cells)
-        elif method == "place_finding":
-            return self.place_finding(self.puzzle, self.unsolved_cells)
         else:
             print("Enter valid algorithm")
     
@@ -116,19 +114,4 @@ class Sudoku:
                 empty_cells.remove(empty_cell)
                 return self.candidate_checking(puzzle, empty_cells)
 
-        return False                                                            # Correct value can't be determined for any empty cell
-
-    def place_finding(self, sudoku, empty_cells):
-        if len(empty_cells) == 0:                                               # Sudoku solved if there are no more empty cells left
-            return True
-        
-        for empty_cell in empty_cells:                                          # Loop through all empty cells
-            candidates = self.get_candidates(sudoku, empty_cell[0], empty_cell[1])
-
-            if len(candidates) == 1:                                            # Hidden single if there is only one candidate left
-                sudoku[empty_cell[0]][empty_cell[1]] = candidates.pop()
-                empty_cells.remove(empty_cell)   
-                return self.candidate_checking(sudoku, empty_cells)
-        
-        return False          
-
+        return False                                                            # Correct value can't be determined for any empty cell        

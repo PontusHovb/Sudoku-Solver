@@ -1,5 +1,5 @@
 #define FILENAME "../Data/sudoku.csv"
-#define NO_PUZZLES 1000
+#define NO_PUZZLES 10000
 #define SIZE 9
 #define ALGORITHM "bruteforce_lookahead"
 
@@ -22,7 +22,6 @@ int solve_sudoku(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
 int bruteforce(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells);
 int bruteforce_lookahead(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells);
 int candidate_checking(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells);
-int place_finding(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells);
 int validGuess(int r, int c, int guess, int (*sudoku)[SIZE][SIZE]);
 
 #endif

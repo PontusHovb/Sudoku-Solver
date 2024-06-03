@@ -17,29 +17,6 @@ int correct_solution(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]) {
     return 1;
 }
 
-int get_candidates(int (*sudoku)[SIZE][SIZE], int row, int col) {
-    int candidates[SIZE] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-    
-    for (int i = 0; i < SIZE; i++) {
-        candidates[(*sudoku)[row][i] - 1] = 0;                  // Eliminate candidates in same column    
-    }
-
-    for (int i = 0; i < SIZE; i++) {
-        candidates[(*sudoku)[i][col] - 1] = 0;                  // Eliminate candidates in same column
-    }
-
-    // Check if guess is in the 3x3 square
-    int start_row = 3 * (row / 3);
-    int start_col = 3 * (col / 3);
-    for (int i = start_row; i < start_row + 3; i++) {
-        for (int j = start_col; j < start_col + 3; j++) {
-            candidates[(*sudoku)[i][j] - 1] = 0;                // Eliminate candidates in same box
-        }
-    }
-
-    // TODO
-}
-
 int bruteforce(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells) {
     if (unsolved_index == no_unsolved_cells) {
         return correct_solution(sudoku, solution);
@@ -81,32 +58,36 @@ int bruteforce_lookahead(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE],
 }
 
 int candidate_checking(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells) {
-    if (unsolved_index == no_unsolved_cells) {
-        return correct_solution(sudoku, solution);
-    }
+    // Loop through unsolved cells until no more cell can be solved
+    int solvedIter = 1;             // Used for initialization
+    int solvedPrevIter = 0;        
 
-    int possible_values = 0;
-    int possible_guess;
-    for (int guess = 1; guess <= 9; guess++) {
-        if (validGuess((*unsolved_cells)[unsolved_index][0], (*unsolved_cells)[unsolved_index][1], guess, sudoku)) {
-            possible_guess = guess;
-            possible_values++;
+    while (solvedIter > solvedPrevIter) {
+        solvedPrevIter = solvedIter;
+        solvedIter = 0;
+
+        // Test all unsolved cells
+        for (int i = 0; i < no_unsolved_cells; i++) {
+            int possible_values = 0;
+            int possible_guess;
+            for (int guess = 1; guess <= 9; guess++) {
+                if (validGuess((*unsolved_cells)[i][0], (*unsolved_cells)[i][1], guess, sudoku)) {
+                    possible_guess = guess;
+                    possible_values++;
+                }
+            }
+
+            if (possible_values == 1) {
+                (*sudoku)[(*unsolved_cells)[i][0]][(*unsolved_cells)[i][1]] = possible_guess;
+                solvedIter++;
+            }
+        }
+
+        if (correct_solution(sudoku, solution)) {
+            return 1;
         }
     }
-
-    if (possible_values == 1) {
-        (*sudoku)[(*unsolved_cells)[unsolved_index][0]][(*unsolved_cells)[unsolved_index][1]] = possible_guess;
-    }
-
-    return candidate_checking(sudoku, solution, unsolved_cells, unsolved_index + 1, no_unsolved_cells);
-}
-
-int place_finding(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2], int unsolved_index, int no_unsolved_cells) {
-    if (unsolved_index == no_unsolved_cells) {
-        return correct_solution(sudoku, solution);
-    }
-
-
+    return 0;
 }
 
 int get_all_unsolved(int (*sudoku)[SIZE][SIZE], int (*unsolved_cells)[SIZE*SIZE][2]) {
@@ -166,9 +147,6 @@ int solve_sudoku(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]) {
     }
     else if (strcmp(ALGORITHM, "candidate_checking") == 0) {
         return candidate_checking(sudoku, solution, &unsolved_cells, unsolved_index, no_unsolved_cells);
-    }
-    else if (strcmp(ALGORITHM, "place_finding") == 0) {
-        return place_finding(sudoku, solution, &unsolved_cells, unsolved_index, no_unsolved_cells);
     }
     else {
         printf("Choose valid algorithm");

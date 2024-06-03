@@ -5,7 +5,7 @@ import os
 from solver import Sudoku
 
 FILENAME = "../Data/sudoku.csv"
-ALGORITHM = "bruteforce_lookahead"
+ALGORITHM = "candidate_checking"
 NO_PUZZLES = 1000
 SIZE = 9
  
