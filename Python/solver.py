@@ -18,14 +18,15 @@ class Sudoku:
             print('\n', end='')
             
     def solve(self, method):
-        if method == "bruteforce":                               
-            return self.bruteforce(self.puzzle, self.unsolved_cells, len(self.unsolved_cells))
-        elif method == "bruteforce_lookahead":
-            return self.bruteforce_lookahead(self.puzzle, self.unsolved_cells)
-        elif method == "candidate_checking":
-            return self.candidate_checking(self.puzzle, self.unsolved_cells)
-        else:
-            print("Enter valid algorithm")
+        match method:
+            case "bruteforce":                               
+                return self.bruteforce(self.puzzle, self.unsolved_cells, len(self.unsolved_cells))
+            case "bruteforce_lookahead":
+                return self.bruteforce_lookahead(self.puzzle, self.unsolved_cells)
+            case "candidate_checking":
+                return self.candidate_checking(self.puzzle, self.unsolved_cells)
+            case _:
+                print("Enter valid algorithm")
     
     def correct_solution(self):
         return np.array_equal(self.puzzle, self.solution)
