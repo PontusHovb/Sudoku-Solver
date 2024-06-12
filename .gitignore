@@ -1,4 +1,5 @@
 Data
 .vscode
+.DS_Store
 Python/__pycache__
 C/sudoku
