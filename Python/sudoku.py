@@ -5,7 +5,8 @@ import os
 from solver import Sudoku
 
 FILENAME = "../Data/sudoku.csv"
-ALGORITHM = "bruteforce_lookahead"
+ALGORITHM = "candidate_checking"
+SHOW_GUI = True
 NO_PUZZLES = 1000
 SIZE = 9
  
@@ -43,7 +44,7 @@ def main():
     total_misses = 0
     for puzzle, solution in zip(puzzles, solutions):
         sudoku = Sudoku(puzzle, solution)
-        misses = sudoku.solve(ALGORITHM)
+        misses = sudoku.solve(ALGORITHM, SHOW_GUI)
         
         if sudoku.correct_solution():
             solved_sudokus += 1

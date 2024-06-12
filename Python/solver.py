@@ -1,4 +1,5 @@
 import numpy as np
+from gui import GUI
 
 class Sudoku:
     def __init__(self, puzzle, solution):
@@ -19,14 +20,17 @@ class Sudoku:
 
             print('\n', end='')
             
-    def solve(self, method):
+    def solve(self, method, show_gui):
+        if show_gui:
+            self.gui = GUI(self.puzzle, method)
+
         match method:
             case "bruteforce":                               
-                self.bruteforce(self.puzzle, self.unsolved_cells, len(self.unsolved_cells))
+                self.bruteforce(self.puzzle, self.unsolved_cells, self.gui)
             case "bruteforce_lookahead":
-                self.bruteforce_lookahead(self.puzzle, self.unsolved_cells)
+                self.bruteforce_lookahead(self.puzzle, self.unsolved_cells, self.gui)
             case "candidate_checking":
-                self.candidate_checking(self.puzzle, self.unsolved_cells)
+                self.candidate_checking(self.puzzle, self.unsolved_cells, self.gui)
             case _:
                 print("Enter valid algorithm")
 
@@ -74,52 +78,57 @@ class Sudoku:
 
         return candidates
 
-    def bruteforce(self, puzzle, empty_cells):
+    def bruteforce(self, puzzle, empty_cells, gui):
         if len(empty_cells) == 0:
             return True if self.correct_solution() else False
                
         for guess in range(1,10):                                               # If empty cells left, make a guess for first empty cell
+            gui.show_number(empty_cells[0][0], empty_cells[0][1], guess)
+            gui.add_number(empty_cells[0][0], empty_cells[0][1], guess)
             puzzle[empty_cells[0][0]][empty_cells[0][1]] = guess
             self.guesses += 1
 
-            if self.bruteforce(puzzle, empty_cells[1:]):                        # Recursive solving
+            if self.bruteforce(puzzle, empty_cells[1:], gui):                   # Recursive solving
                 return True
             
             puzzle[empty_cells[0][0]][empty_cells[0][1]] = 0                    # Backtrack if guess don't yield solution
 
         return False
     
-    def bruteforce_lookahead(self, puzzle, empty_cells):
+    def bruteforce_lookahead(self, puzzle, empty_cells, gui):
         if len(empty_cells) == 0:                                     
             return True if self.correct_solution() else False
 
         for guess in range(1, 10):                                              # If empty cells left, make a guess for first empty cell
+            gui.show_number(empty_cells[0][0], empty_cells[0][1], guess)
             if self.valid_guess(empty_cells[0][0], empty_cells[0][1], guess, puzzle):
+                gui.add_number(empty_cells[0][0], empty_cells[0][1], guess)
                 puzzle[empty_cells[0][0]][empty_cells[0][1]] = guess
                 self.guesses += 1
 
-                if self.bruteforce_lookahead(puzzle, empty_cells[1:]):          # Recursive solving
+                if self.bruteforce_lookahead(puzzle, empty_cells[1:],  gui):    # Recursive solving
                     return True
                     
                 puzzle[empty_cells[0][0]][empty_cells[0][1]] = 0                # Backtrack if guess don't yield solution
 
         return False
 
-    def candidate_checking(self, puzzle, empty_cells):
+    def candidate_checking(self, puzzle, empty_cells, gui):
         if len(empty_cells) == 0:                                               # puzzle solved if there are no more empty cells left
             return True
         
         for empty_cell in empty_cells:                                          # Loop through all empty cells
             possible_values = 0
             for guess in range(1, 10):
+                gui.show_number(empty_cell[0], empty_cell[1], guess)
                 if self.valid_guess(empty_cell[0], empty_cell[1], guess, puzzle):
                     possible_guess = guess
                     possible_values += 1
 
             if possible_values == 1:                                            # If there is only one candidate for empty cell
+                gui.add_number(empty_cell[0], empty_cell[1], possible_guess)
                 puzzle[empty_cell[0]][empty_cell[1]] = possible_guess
-                self.guesses += 1
                 empty_cells.remove(empty_cell)
-                return self.candidate_checking(puzzle, empty_cells)
+                return self.candidate_checking(puzzle, empty_cells, gui)
 
         return False                                                            # Correct value can't be determined for any empty cell        
