@@ -23,14 +23,14 @@ class GUI():
         self.draw_grid(puzzle)
         pygame.display.flip()
 
-    def run(self):
+    def run(self, duration=DURATION):
         start_time = time.time()
         running = True
         while running:
             for event in pygame.event.get():
                 if event.type is pygame.QUIT:
                     running = False
-            if time.time() - start_time > DURATION:
+            if time.time() - start_time > duration:
                 running = False
             pygame.display.flip()
 
@@ -63,6 +63,9 @@ class GUI():
         text_y = row * self.block_size + (self.block_size - text.get_height()) // 2
         self.screen.blit(text, (text_x, text_y))
        
+    def erase_number(self, row, col):
+        self.screen.fill(WHITE, rect=[col * self.block_size + 2, row * self.block_size + 2, self.block_size  - 4, self.block_size - 4])
+
 def main():
     puzzle = [[0, 1, 0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0, 0, 0],
