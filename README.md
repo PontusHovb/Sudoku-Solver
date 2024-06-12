@@ -46,22 +46,28 @@ Algorithms and code languages are tested on a various of parameters:
 The average time to solve a sudoku with each of the algorithms were as followed:
 | Algorithm               | Python | C       |
 |-------------------------|--------|---------|
+| Bruteforce              |        |         |
 | Bruteforce w. lookahead | 14 ms  | 0.08 ms |
 | Candidate-checking      | 25 ms  | 0.10 ms |
+| Place-finding           |        |         |
 
 ## Accuracy
-The number of misses per algorithm:
-| Algorithm               | Misses |
-|-------------------------|--------|
-| Bruteforce w. lookahead | 84     |
-| Candidate-checking      | 0      |
+Average number of tries per empty cell:
+| Algorithm               | Avg. tries |
+|-------------------------|------------|
+| Bruteforce              |            |
+| Bruteforce w. lookahead |            |
+| Candidate-checking      | 1          |
+| Place-finding           | 1          |
 
 ## Solving ability
 Percentage of sudokus solved:
 | Algorithm               | Sudokus solved |
 |-------------------------|----------------|
+| Bruteforce              | 100.00%        |
 | Bruteforce w. lookahead | 100.00%        |
 | Candidate-checking      | 99.96%         |
+| Place-finding           |                |
 
 This is equivalent to candidate checking not being able to solve 337 out of the 1.000.000 sudokus in the Kaggle-dataset.
 
