@@ -23,8 +23,14 @@ An improvement to the bruteforce method can be done with the backtracking method
 The candidate checking method for solving sudokus involve writing down all possible values for each empty cell. For each cell where there is only one possible value (naked single), that value must be the correct value and is inserted, and the rest of the empty cells are then updated. The advantage of this method is that it only inserts correct numbers but finding naked singles can be difficult and it is not guaranteed that it will reach a solution.
 <br clear="all"/>
 
+## Place-finding method
+<img align="left" width="250" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs/place_finding.gif"/>
+<img align="left" width="50" src="https://github.com/PontusHovb/Sudoku/assets/67122081/5818307d-976f-4cfc-9ad9-cf1ef711ceb1"/>
+The place finding method iterate through each unsolved cell and try to find cells where the guess can only occur in that cell. This means that the guess only can occur in one place in the specific row, column or box. If the guess has only one possible location in its row, column or box that must be the correct position and the guess is inserted.
+<br clear="all"/>
+
 ## Crook's algorithm
-Crook's algorithm starts by using the candidate-checking and place-finding methods to solve these cells that can be solved with either of these methods. When no more cells can be sovled with these methods the backtracking method is used to solve the remaining cells.
+Crook's algorithm starts by using the candidate-checking and place-finding methods to solve these cells that can be solved with either of these methods. 
 
 ### Preemtive sets
 Preemtive sets are cells with m numbers (2 $\le$ m $\le$ 8) that fill up m cells. Since these number must fill up the m cells they can be ruled out as possible values for other cells in row/column/box. Preemtive sets are also refered to as Naked Pairs (m=2), Naked Triplets (m=3) etc.  
