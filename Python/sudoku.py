@@ -5,9 +5,9 @@ import os
 from solver import Sudoku
 
 FILENAME = "../Data/sudoku.csv"
-ALGORITHM = "candidate_checking"
-SHOW_GUI = True
-NO_PUZZLES = 1000
+ALGORITHM = "place_finding"
+SHOW_GUI = False
+NO_PUZZLES = 100
 SIZE = 9
  
 # Read puzzles from csv-file
@@ -41,18 +41,19 @@ def main():
 
     # Solve each sudoku
     solved_sudokus = 0
-    total_misses = 0
+    total_tries, total_empty_cells = 0, 0
     for puzzle, solution in zip(puzzles, solutions):
         sudoku = Sudoku(puzzle, solution)
-        misses = sudoku.solve(ALGORITHM, SHOW_GUI)
+        tries, empty_cells = sudoku.solve(ALGORITHM, SHOW_GUI)
         
         if sudoku.correct_solution():
             solved_sudokus += 1
-            total_misses += misses
+            total_tries += tries
+            total_empty_cells += empty_cells
 
     solve_end_time = time.time()
     print(f"Method solved {round(solved_sudokus / NO_PUZZLES, 2)*100}% of {NO_PUZZLES} sudokus in {round(solve_end_time - download_end_time, 4)} seconds")
-    print(f"Method averaged {total_misses / solved_sudokus} misses per solved sudoku")
+    print(f"Method averaged {round(total_tries / total_empty_cells, 2)} tries per unsolved cell")
 
 if __name__ == '__main__':
     main()

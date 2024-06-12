@@ -7,7 +7,7 @@ class Sudoku:
         self.solution = solution
         self.unsolved_cells = self.get_all_unsolved(self.puzzle)
         self.no_unsolved_cells = len(self.unsolved_cells)
-        self.guesses = 0
+        self.tries = 0
 
     def __str__(self):
         for r, row in enumerate(self.puzzle):
@@ -38,7 +38,7 @@ class Sudoku:
             case _:
                 print("Enter valid algorithm")
 
-        return self.guesses - self.no_unsolved_cells
+        return self.tries, self.no_unsolved_cells
     
     def correct_solution(self):
         return np.array_equal(self.puzzle, self.solution)
@@ -110,7 +110,7 @@ class Sudoku:
                 gui.show_number(empty_cells[0][0], empty_cells[0][1], guess)
                 gui.add_number(empty_cells[0][0], empty_cells[0][1], guess)
             puzzle[empty_cells[0][0]][empty_cells[0][1]] = guess
-            self.guesses += 1
+            self.tries += 1
 
             if self.bruteforce(puzzle, empty_cells[1:], gui):                   # Recursive solving
                 return True
@@ -129,7 +129,7 @@ class Sudoku:
             if self.valid_guess(empty_cells[0][0], empty_cells[0][1], guess, puzzle):
                 if gui: gui.add_number(empty_cells[0][0], empty_cells[0][1], guess)
                 puzzle[empty_cells[0][0]][empty_cells[0][1]] = guess
-                self.guesses += 1
+                self.tries += 1
 
                 if self.bruteforce_lookahead(puzzle, empty_cells[1:], gui):     # Recursive solving
                     return True
@@ -154,6 +154,7 @@ class Sudoku:
             if possible_values == 1:                                            # If there is only one candidate for empty cell
                 if gui: gui.add_number(empty_cell[0], empty_cell[1], possible_guess)
                 puzzle[empty_cell[0]][empty_cell[1]] = possible_guess
+                self.tries += 1
                 empty_cells.remove(empty_cell)
                 return self.candidate_checking(puzzle, empty_cells, gui)
 
@@ -173,5 +174,6 @@ class Sudoku:
                         
                         if gui: gui.add_number(empty_cell[0], empty_cell[1], guess)
                         puzzle[empty_cell[0]][empty_cell[1]] = guess
+                        self.tries += 1
                         empty_cells.remove(empty_cell)
                         self.place_finding(puzzle, empty_cells, gui)
