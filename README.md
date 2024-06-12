@@ -5,15 +5,21 @@ Algorithms are tested on 1 million Sudoku games accessible through Kaggle (https
 
 # Algorithms
 ## Bruteforce method
-![](https://github.com/PontusHovb/Sudoku/blob/master/GIFs/bruteforce.gif)
-In the bruteforcee method, a guess is performed for each empty cell until all cells are filled. If sudoku is not correctly solved a new guess for the last empty cell is performed. This is an algorithm which is easy to implement but computationally inefficient since it requires a maximum of $9^{\text{# empty cells}}$ tries until the sudoku is solved.
+<p align=left>
+<img width=250 src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs/bruteforce.gif" />
+</p>
+In the bruteforcee method, a guess is performed for each empty cell until all cells are filled. If sudoku is not correctly solved a new guess for the last empty cell is performed. This is an algorithm which is easy to implement but computationally inefficient since it requires a maximum of $9^{\text{no. empty cells}}$ tries until the sudoku is solved.
 
 ## Bruteforce with look ahead (backtracking method)
-![](https://github.com/PontusHovb/Sudoku/blob/master/GIFs/bruteforce_lookahead.gif)
+<p align=left>
+<img width=250 src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs/bruteforce_lookahead.gif" />
+</p>
 An improvement to the bruteforce method can be done with the backtracking method where a guess (1-9) is performed for the first cell. If the guess is valid (does not violate sudoku-condition (same number is already in row, column and box)) then the function calls itself recursively with the remaining unsolved cells. This method can solve all solvable sudokus but often requires a lot of wrong tries before reaching the correct solution.
 
 ## Candidate-checking method
-![](https://github.com/PontusHovb/Sudoku/blob/master/GIFs/candidate_checking.gif)
+<p align=left>
+<img width=250 src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs/candidate_checking.gif" />
+</p>
 The candidate checking method for solving sudokus involve writing down all possible values for each empty cell. For each cell where there is only one possible value (naked single), that value must be the correct value and is inserted, and the rest of the empty cells are then updated. The advantage of this method is that it only inserts correct numbers but finding naked singles can be difficult and it is not guaranteed that it will reach a solution.
 
 ## Crook's algorithm
