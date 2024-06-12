@@ -3,35 +3,6 @@ Testing different algorithms and code languages for solving the game Sudoku.
 
 Algorithms are tested on 1 million Sudoku games accessible through Kaggle (https://www.kaggle.com/datasets/bryanpark/sudoku)
 
-# Evaluation 
-Algorithms are tested on a various of parameters:
-- Time (average time to solve a sudoku)
-- Misses (number of times solver guessed on a wrong value)
-- Percentage of sudokus solved (how many of total sudokus where algorithm able to solve)
-
-## Time
-The average time to solve a sudoku with each of the algorithms were as followed:
-| Algorithm               | Python | C       | C vs. Python |
-|-------------------------|--------|---------|--------------|
-| Bruteforce w. lookahead | 14 ms  | 0.08 ms | -99.4%       |
-| Candidate-checking      | 25 ms  | 0.10 ms | -99.6%       |
-
-## Misses
-The number of misses per algorithm:
-| Algorithm               | Misses |
-|-------------------------|--------|
-| Bruteforce w. lookahead | 84     |
-| Candidate-checking      | 0      |
-
-## Sudokus solved
-Percentage of sudokus solved:
-| Algorithm               | Sudokus solved |
-|-------------------------|----------------|
-| Bruteforce w. lookahead | 100.00%        |
-| Candidate-checking      | 99.96%         |
-
-This is equivalent to candidate checking not being able to solve 337 out of the 1.000.000 sudokus in the Kaggle-dataset.
-
 # Algorithms
 ## Brute-force method
 In the backtracking method, a guess (1-9) is performed for the first cell. If the guess is valid (does not violate sudoku-condition (same number is already in row, column and box)) then the function calls itself recursively with the remaining unsolved cells. This is done until sudoku is solved or there are no possible value for remaining empty cell.
@@ -48,3 +19,35 @@ Crook's algorithm starts by using the candidate-checking and place-finding metho
 
 ### Preemtive sets
 Preemtive sets are cells with m numbers (2 $\le$ m $\le$ 8) that fill up m cells. Since these number must fill up the m cells they can be ruled out as possible values for other cells in row/column/box. Preemtive sets are also refered to as Naked Pairs (m=2), Naked Triplets (m=3) etc.  
+
+# Evaluation 
+Algorithms and code languages are tested on a various of parameters:
+- Speed (average time to solve a sudoku)
+- Accuracy (average number of tries to solve an empty cell)
+- Solving ability (% of sudoku's solved)
+- Memory allocation (average memory allocation per sudoku)
+
+## Speed
+The average time to solve a sudoku with each of the algorithms were as followed:
+| Algorithm               | Python | C       |
+|-------------------------|--------|---------|
+| Bruteforce w. lookahead | 14 ms  | 0.08 ms |
+| Candidate-checking      | 25 ms  | 0.10 ms |
+
+## Accuracy
+The number of misses per algorithm:
+| Algorithm               | Misses |
+|-------------------------|--------|
+| Bruteforce w. lookahead | 84     |
+| Candidate-checking      | 0      |
+
+## Solving ability
+Percentage of sudokus solved:
+| Algorithm               | Sudokus solved |
+|-------------------------|----------------|
+| Bruteforce w. lookahead | 100.00%        |
+| Candidate-checking      | 99.96%         |
+
+This is equivalent to candidate checking not being able to solve 337 out of the 1.000.000 sudokus in the Kaggle-dataset.
+
+## Memory allocation
