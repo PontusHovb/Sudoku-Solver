@@ -26,14 +26,16 @@ The candidate checking method for solving sudokus involve writing down all possi
 ## Place-finding method
 <img align="left" width="250" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs/place_finding.gif"/>
 <img align="left" width="50" src="https://github.com/PontusHovb/Sudoku/assets/67122081/5818307d-976f-4cfc-9ad9-cf1ef711ceb1"/>
-The place finding method iterate through each unsolved cell and try to find cells where the guess can only occur in that cell. This means that the guess only can occur in one place in the specific row, column or box. If the guess has only one possible location in its row, column or box that must be the correct position and the guess is inserted.
+The place finding method iterate through each unsolved cell and try to find cells where the guess can only occur in that cell (naked singles). This means that the guess only can occur in one place in the specific row, column or box. If the guess has only one possible location in its row, column or box that must be the correct position and the guess is inserted.
 <br clear="all"/>
 
 ## Crook's algorithm
-Crook's algorithm starts by using the candidate-checking and place-finding methods to solve these cells that can be solved with either of these methods. 
-
+<img align="left" width="250" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs/crooks_algorithm.gif"/>
+<img align="left" width="50" src="https://github.com/PontusHovb/Sudoku/assets/67122081/5818307d-976f-4cfc-9ad9-cf1ef711ceb1"/>
+Crook's algorithm is a pen and paper algorithm for finding sudokus. Crook's algorithm is an extension of the place-finding method, not only looking for naked singles but preemtive sets with $m>2$.
 ### Preemtive sets
 Preemtive sets are cells with m numbers (2 $\le$ m $\le$ 8) that fill up m cells. Since these number must fill up the m cells they can be ruled out as possible values for other cells in row/column/box. Preemtive sets are also refered to as Naked Pairs (m=2), Naked Triplets (m=3) etc.  
+<br clear="all"/>
 
 # Evaluation 
 Algorithms and code languages are tested on a various of parameters:

@@ -35,6 +35,8 @@ class Sudoku:
                 self.candidate_checking(self.puzzle, self.unsolved_cells, self.gui)
             case "place_finding":
                 self.place_finding(self.puzzle, self.unsolved_cells, self.gui)
+            case "crooks_algorithm":
+                self.crooks_algorithm(self.puzzle, self.unsolved_cells, self.gui)
             case _:
                 print("Enter valid algorithm")
 
@@ -88,6 +90,58 @@ class Sudoku:
         else:
             return False
         return True
+
+    def find_preemtive_sets(self, cell, sudoku_markup, gui):
+        cell_markup = sudoku_markup[cell[0]][cell[1]]
+        changes_made = 0
+
+        # Row
+        row = sudoku_markup[cell[0]].tolist()
+        if row.count(cell_markup) == len(cell_markup):
+            for value in cell_markup:
+                for c, markup in enumerate(row):
+                    if markup != cell_markup:
+                        try:
+                            sudoku_markup[cell[0]][c].remove(value)
+                            changes_made += 1
+                            if gui: gui.draw_markup_cell(cell[0], c, markup)
+                        except:
+                            pass
+
+        # Column
+        col = [sudoku_markup[i][cell[1]] for i in range(9)]
+        if col.count(cell_markup) == len(cell_markup):
+            for value in cell_markup:
+                for r, markup in enumerate(col):
+                    if markup != cell_markup:
+                        try:
+                            sudoku_markup[r][cell[1]].remove(value)
+                            changes_made += 1
+                            if gui: gui.draw_markup_cell(r, cell[1], markup)
+                        except:
+                            pass
+
+        # Box
+        box_indecies = list()
+        box = list()
+        for r, row in enumerate(sudoku_markup):
+            for c, markup in enumerate(row):
+                if r // 3 == cell[0] // 3 and c // 3 == cell[1] // 3:
+                    box.append(markup)
+                    box_indecies.append([r, c])
+
+        if box.count(   cell_markup) == len(cell_markup):
+            for value in cell_markup:
+                for i, markup in enumerate(box):
+                    if markup != cell_markup:
+                        try:
+                            sudoku_markup[box_indecies[i][0]][box_indecies[i][1]].remove(value)
+                            changes_made += 1
+                            if gui: gui.draw_markup_cell(box_indecies[i][0], box_indecies[i][1], markup)
+                        except:
+                            pass
+
+        return sudoku_markup, changes_made
 
     def get_candidates(self, puzzle, row, column):
         candidates = set(range(1, 10))
@@ -177,3 +231,38 @@ class Sudoku:
                         self.tries += 1
                         empty_cells.remove(empty_cell)
                         self.place_finding(puzzle, empty_cells, gui)
+
+    def crooks_algorithm(self, puzzle, empty_cells, gui):
+        sudoku_markup = np.empty((9, 9), dtype=set)
+
+        # Mark sudoku with all possible values for every empty cell
+        for empty_cell in empty_cells:
+            sudoku_markup[empty_cell[0]][empty_cell[1]] = self.get_candidates(puzzle, empty_cell[0], empty_cell[1])
+        gui.draw_markup_grid(puzzle, sudoku_markup)
+        
+        return self.crooks_algorithm_solve(puzzle, sudoku_markup, gui)
+
+    def crooks_algorithm_solve(self, puzzle, sudoku_markup, gui, i=0):
+        if np.count_nonzero(sudoku_markup == None) == 9*9:
+            return True
+        
+        changes_made = 0
+        
+        for r, row in enumerate(sudoku_markup):
+            for c, markup in enumerate(row):
+                if markup != None:
+                    sudoku_markup, updates = self.find_preemtive_sets([r, c], sudoku_markup, gui)
+                    changes_made += updates
+
+                    if len(markup) == 1:
+                        puzzle[r, c] = list(markup)[0]
+                        sudoku_markup[r][c] = None
+                        changes_made += 1
+                        if gui: 
+                            gui.show_number(r, c, list(markup)[0])
+                            gui.add_number(r, c, list(markup)[0])
+
+        if changes_made>0:
+            return self.crooks_algorithm_solve(puzzle, sudoku_markup, gui, i+1)
+        else:
+            return False
