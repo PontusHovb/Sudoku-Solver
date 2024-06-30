@@ -41,21 +41,21 @@ Algorithms and code languages are tested on a various of parameters:
 
 ## Speed
 The average time to solve a sudoku with each of the algorithms were as followed:
-| Algorithm               | Python | C       |
-|-------------------------|--------|---------|
-| Bruteforce              | >1h    |         |
-| Bruteforce w. lookahead | 15 ms  | 0.08 ms |
-| Candidate-checking      | 21 ms  | 0.10 ms |
-| Place-finding           | 74 ms  | n/a     |
-| Crook's Algorithm       | 4.5 ms | n/a     |
+| Algorithm               | Python  | C        |
+|-------------------------|---------|----------|
+| Bruteforce              | -       | -        |
+| Bruteforce w. lookahead | 15 ms   | 0.034 ms |
+| Candidate-checking      | 21 ms   | 0.050 ms |
+| Place-finding           | 74 ms   | 0.067 ms |
+| Crook's Algorithm       | 4.5 ms  |          |
 
-Place-finding and Crook's Algorithm are not yet implemented in C.
+Crook's Algorithm is not yet implemented in C.
 
 ## Accuracy
 Average number of tries per empty cell:
 | Algorithm               | Avg. tries |
 |-------------------------|------------|
-| Bruteforce              |            |
+| Bruteforce              | 9.0        |
 | Bruteforce w. lookahead | 2.7        |
 | Candidate-checking      | 1.0        |
 | Place-finding           | 1.0        |
@@ -65,10 +65,10 @@ Average number of tries per empty cell:
 Percentage of sudokus solved:
 | Algorithm               | Sudokus solved |
 |-------------------------|----------------|
-| Bruteforce              | 100.000%       |
-| Bruteforce w. lookahead | 100.000%       |
-| Candidate-checking      | 99.963%        |
-| Place-finding           |                |
+| Bruteforce              | 100.0000%      |
+| Bruteforce w. lookahead | 100.0000%      |
+| Candidate-checking      | 99.9663%       |
+| Place-finding           | 58.8468%       |
 | Crook's Algorithm       |                |
 
 This is equivalent to candidate checking not being able to solve 337 out of the 1.000.000 sudokus in the Kaggle-dataset.

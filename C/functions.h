@@ -18,10 +18,12 @@ void PrintSudoku(int (*sudoku)[SIZE][SIZE]);
 int CorrectSolution(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
 int GetCandidates(int (*sudoku)[SIZE][SIZE], int row, int col);
 int GetAllUnsolved(int (*sudoku)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2]);
+int IsOnlyPossibleLocation(int (*sudoku)[SIZE][SIZE], int row, int col, int guess, char checkType[3]);
 int SolveSudoku(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE]);
-int Bruteforce(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int unsolved_index, int noUnsolvedCells);
-int BruteforceLookAhead(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int unsolved_index, int noUnsolvedCells);
-int CandidateChecking(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int unsolved_index, int noUnsolvedCells);
+int Bruteforce(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int unsolvedIndex, int noUnsolvedCells);
+int BruteforceLookAhead(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int unsolvedIndex, int noUnsolvedCells);
+int CandidateChecking(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int noUnsolvedCells);
+int PlaceFinding(int (*sudoku)[SIZE][SIZE], int (*solution)[SIZE][SIZE], int (*unsolvedCells)[SIZE*SIZE][2], int noUnsolvedCells);
 int ValidGuess(int row, int col, int guess, int (*sudoku)[SIZE][SIZE]);
 
 #endif
