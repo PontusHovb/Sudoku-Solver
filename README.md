@@ -1,8 +1,3 @@
-# Sudoku
-Testing different algorithms and code languages for solving the game Sudoku.
-
-Algorithms are tested on 1 million Sudoku games accessible through Kaggle (https://www.kaggle.com/datasets/bryanpark/sudoku)
-
 # Algorithms
 
 ## Bruteforce method
@@ -48,29 +43,38 @@ Algorithms and code languages are tested on a various of parameters:
 The average time to solve a sudoku with each of the algorithms were as followed:
 | Algorithm               | Python | C       |
 |-------------------------|--------|---------|
-| Bruteforce              |        |         |
-| Bruteforce w. lookahead | 14 ms  | 0.08 ms |
-| Candidate-checking      | 25 ms  | 0.10 ms |
-| Place-finding           |        |         |
+| Bruteforce              | >1h    |         |
+| Bruteforce w. lookahead | 15 ms  | 0.08 ms |
+| Candidate-checking      | 21 ms  | 0.10 ms |
+| Place-finding           | 74 ms  | n/a     |
+| Crook's Algorithm       | 4.5 ms | n/a     |
+
+Place-finding and Crook's Algorithm are not yet implemented in C.
 
 ## Accuracy
 Average number of tries per empty cell:
 | Algorithm               | Avg. tries |
 |-------------------------|------------|
 | Bruteforce              |            |
-| Bruteforce w. lookahead |            |
-| Candidate-checking      | 1          |
-| Place-finding           | 1          |
+| Bruteforce w. lookahead | 2.7        |
+| Candidate-checking      | 1.0        |
+| Place-finding           | 1.0        |
+| Crook's Algorithm       | 1.0        |
 
 ## Solving ability
 Percentage of sudokus solved:
 | Algorithm               | Sudokus solved |
 |-------------------------|----------------|
-| Bruteforce              | 100.00%        |
-| Bruteforce w. lookahead | 100.00%        |
-| Candidate-checking      | 99.96%         |
+| Bruteforce              | 100.000%       |
+| Bruteforce w. lookahead | 100.000%       |
+| Candidate-checking      | 99.963%        |
 | Place-finding           |                |
+| Crook's Algorithm       |                |
 
 This is equivalent to candidate checking not being able to solve 337 out of the 1.000.000 sudokus in the Kaggle-dataset.
 
 ## Memory allocation
+
+
+# Source
+Algorithms are tested on 1 million Sudoku games accessible on Kaggle (https://www.kaggle.com/datasets/bryanpark/sudoku)

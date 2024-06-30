@@ -1,6 +1,12 @@
-import pygame
 import math
 import time
+import sys
+import os
+import contextlib
+
+# Import pygame without welcome message
+with open(os.devnull, 'w') as f, contextlib.redirect_stdout(f):
+    import pygame
 
 SIZE = 9
 SCREEN_SIZE = 450

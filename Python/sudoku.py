@@ -1,13 +1,12 @@
 import numpy as np
 import time
 import random
-import os
+import sys
 from solver import Sudoku
 
 FILENAME = "../Data/sudoku.csv"
-ALGORITHM = "place_finding"
 SHOW_GUI = False
-NO_PUZZLES = 100
+NO_PUZZLES = 1
 SIZE = 9
  
 # Read puzzles from csv-file
@@ -34,6 +33,12 @@ def read_puzzles(filename, no_puzzles):
     return puzzles, solutions    
 
 def main():
+    try: 
+        algorithm = sys.argv[1]
+    except IndexError:
+        print("Choose an algorithm")
+        return
+
     start_time = time.time()
     puzzles, solutions = read_puzzles(FILENAME, NO_PUZZLES)                 # Get sudokus
     download_end_time = time.time()
@@ -44,7 +49,7 @@ def main():
     total_tries, total_empty_cells = 0, 0
     for puzzle, solution in zip(puzzles, solutions):
         sudoku = Sudoku(puzzle, solution)
-        tries, empty_cells = sudoku.solve(ALGORITHM, SHOW_GUI)
+        tries, empty_cells = sudoku.solve(algorithm, SHOW_GUI)
         
         if sudoku.correct_solution():
             solved_sudokus += 1
@@ -52,9 +57,9 @@ def main():
             total_empty_cells += empty_cells
 
     solve_end_time = time.time()
-    print(f"Method solved {round(solved_sudokus / NO_PUZZLES, 2)*100}% of {NO_PUZZLES} sudokus in {round(solve_end_time - download_end_time, 4)} seconds")
+    print(f"{algorithm} solved {round(solved_sudokus / NO_PUZZLES, 2)*100}% of {NO_PUZZLES} sudokus in {round(solve_end_time - download_end_time, 4)} seconds")
     try:
-        print(f"Method averaged {round(total_tries / total_empty_cells, 2)} tries per unsolved cell")
+        print(f"{algorithm} averaged {round(total_tries / total_empty_cells, 2)} tries per unsolved cell")
     except ZeroDivisionError:
         print("No sudoku solved")
 

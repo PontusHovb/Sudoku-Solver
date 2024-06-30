@@ -238,7 +238,7 @@ class Sudoku:
         # Mark sudoku with all possible values for every empty cell
         for empty_cell in empty_cells:
             sudoku_markup[empty_cell[0]][empty_cell[1]] = self.get_candidates(puzzle, empty_cell[0], empty_cell[1])
-        gui.draw_markup_grid(puzzle, sudoku_markup)
+        if gui: gui.draw_markup_grid(puzzle, sudoku_markup)
         
         return self.crooks_algorithm_solve(puzzle, sudoku_markup, gui)
 
@@ -258,6 +258,7 @@ class Sudoku:
                         puzzle[r, c] = list(markup)[0]
                         sudoku_markup[r][c] = None
                         changes_made += 1
+                        self.tries += 1
                         if gui: 
                             gui.show_number(r, c, list(markup)[0])
                             gui.add_number(r, c, list(markup)[0])
