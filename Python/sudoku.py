@@ -53,7 +53,10 @@ def main():
 
     solve_end_time = time.time()
     print(f"Method solved {round(solved_sudokus / NO_PUZZLES, 2)*100}% of {NO_PUZZLES} sudokus in {round(solve_end_time - download_end_time, 4)} seconds")
-    print(f"Method averaged {round(total_tries / total_empty_cells, 2)} tries per unsolved cell")
+    try:
+        print(f"Method averaged {round(total_tries / total_empty_cells, 2)} tries per unsolved cell")
+    except ZeroDivisionError:
+        print("No sudoku solved")
 
 if __name__ == '__main__':
     main()
