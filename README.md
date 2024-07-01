@@ -27,10 +27,7 @@ The place finding method iterate through each unsolved cell and try to find cell
 ## Crook's algorithm
 <img align="left" width="250" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs/crooks_algorithm.gif"/>
 <img align="left" width="50" src="https://github.com/PontusHovb/Sudoku/assets/67122081/5818307d-976f-4cfc-9ad9-cf1ef711ceb1"/>
-<br clear="all"/>
-Crook's algorithm is a pen and paper algorithm for finding sudokus. Crook's algorithm is an extension of the place-finding method, not only looking for naked singles but preemtive sets with $m>2$.
-### Preemtive sets
-Preemtive sets are cells with m numbers (2 $\le$ m $\le$ 8) that fill up m cells. Since these number must fill up the m cells they can be ruled out as possible values for other cells in row/column/box. Preemtive sets are also refered to as Naked Pairs (m=2), Naked Triplets (m=3) etc.  
+Crook's algorithm is a pen and paper algorithm for finding sudokus. Crook's algorithm is an extension of the place-finding method, not only looking for naked singles but preemtive sets with m>2. Preemtive sets are cells with m numbers (between 2 and 8) that fill up m cells. Since these number must fill up the m cells they can be ruled out as possible values for other cells in row/column/box. Preemtive sets are also refered to as Naked Pairs (m=2), Naked Triplets (m=3) etc.  
 <br clear="all"/>
 
 # Evaluation 
@@ -53,7 +50,7 @@ The average time to solve a sudoku with each of the algorithms were as followed:
 Average number of tries per empty cell:
 | Algorithm               | Avg. tries |
 |-------------------------|------------|
-| Bruteforce              | 9.0        |
+| Bruteforce              | 8.9        |
 | Bruteforce w. lookahead | 3.0        |
 | Candidate-checking      | 1.0        |
 | Place-finding           | 1.0        |
