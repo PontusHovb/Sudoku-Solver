@@ -39,7 +39,8 @@ Algorithms and code languages are tested on a various of parameters:
 ## Speed
 The average time to solve a sudoku with each of the algorithms were as followed:
 The algorithms are tested by solving 100 random sudokus each iteration and the times for python were as followed:
-<img width="350" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs%20%26%20Graphs/average_time.jpg"/>
+<br clear="all"/>
+<img width="350" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs%20%26%20Graphs/average_time.png"/>
 
 Exact times both in Python and C:
 | Algorithm               | Python  | C        |
