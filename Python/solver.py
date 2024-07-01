@@ -91,7 +91,7 @@ class Sudoku:
             return False
         return True
 
-    def find_preemtive_sets(self, cell, sudoku_markup, gui):
+    def find_preemptive_sets(self, cell, sudoku_markup, gui):
         cell_markup = sudoku_markup[cell[0]][cell[1]]
         changes_made = 0
 
@@ -251,7 +251,7 @@ class Sudoku:
         for r, row in enumerate(sudoku_markup):
             for c, markup in enumerate(row):
                 if markup != None:
-                    sudoku_markup, updates = self.find_preemtive_sets([r, c], sudoku_markup, gui)
+                    sudoku_markup, updates = self.find_preemptive_sets([r, c], sudoku_markup, gui)
                     changes_made += updates
 
                     if len(markup) == 1:
