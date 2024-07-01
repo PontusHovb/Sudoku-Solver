@@ -2,6 +2,7 @@ Data
 .vscode
 .DS_Store
 Python/__pycache__
+Python/evaluation.py
 C/sudoku
 C/sudoku.o
 C/solver.o
