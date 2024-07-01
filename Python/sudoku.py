@@ -6,7 +6,7 @@ from solver import Sudoku
 
 FILENAME = "../Data/sudoku.csv"
 SHOW_GUI = False
-NO_PUZZLES = 1
+NO_PUZZLES = 100
 SIZE = 9
  
 # Read puzzles from csv-file
@@ -32,17 +32,11 @@ def read_puzzles(filename, no_puzzles):
 
     return puzzles, solutions    
 
-def main():
-    try: 
-        algorithm = sys.argv[1]
-    except IndexError:
-        print("Choose an algorithm")
-        return
-
+def solve_sudokus(algorithm, show=False):
     start_time = time.time()
     puzzles, solutions = read_puzzles(FILENAME, NO_PUZZLES)                 # Get sudokus
     download_end_time = time.time()
-    print(f"It took {round(download_end_time - start_time, 4)} seconds to download {NO_PUZZLES} sudokus")
+    if show: print(f"It took {round(download_end_time - start_time, 4)} seconds to download {NO_PUZZLES} sudokus")
 
     # Solve each sudoku
     solved_sudokus = 0
@@ -57,11 +51,21 @@ def main():
             total_empty_cells += empty_cells
 
     solve_end_time = time.time()
-    print(f"{algorithm} solved {round(solved_sudokus / NO_PUZZLES, 2)*100}% of {NO_PUZZLES} sudokus in {round(solve_end_time - download_end_time, 4)} seconds")
+    if show: print(f"{algorithm} solved {round(solved_sudokus / NO_PUZZLES, 2)*100}% of {NO_PUZZLES} sudokus in {round(solve_end_time - download_end_time, 4)} seconds")
     try:
-        print(f"{algorithm} averaged {round(total_tries / total_empty_cells, 2)} tries per unsolved cell")
+        if show: print(f"{algorithm} averaged {round(total_tries / total_empty_cells, 2)} tries per unsolved cell")
     except ZeroDivisionError:
-        print("No sudoku solved")
+        if show: print("No sudoku solved")
 
+    return round(solve_end_time - download_end_time, 4)
+
+def main():
+    try: 
+        algorithm = sys.argv[1]
+        return solve_sudokus(algorithm)
+    except IndexError:
+        print("Choose an algorithm")
+        return
+    
 if __name__ == '__main__':
     main()

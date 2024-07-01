@@ -38,12 +38,16 @@ Algorithms and code languages are tested on a various of parameters:
 
 ## Speed
 The average time to solve a sudoku with each of the algorithms were as followed:
+The algorithms are tested by solving 100 random sudokus each iteration and the times for python were as followed:
+<img width="350" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs/average_time.jpg"/>
+
+Exact times both in Python and C:
 | Algorithm               | Python  | C        |
 |-------------------------|---------|----------|
 | Bruteforce              | -       | -        |
 | Bruteforce w. lookahead | 14.9 ms | 0.033 ms |
 | Candidate-checking      | 23.3 ms | 0.054 ms |
-| Place-finding           | 74.7 ms | 0.071 ms |
+| Place-finding           | 82.3 ms | 0.071 ms |
 | Crook's Algorithm       | 4.3 ms  | 0.149 ms |
 
 ## Accuracy
