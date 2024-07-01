@@ -44,19 +44,17 @@ The average time to solve a sudoku with each of the algorithms were as followed:
 | Algorithm               | Python  | C        |
 |-------------------------|---------|----------|
 | Bruteforce              | -       | -        |
-| Bruteforce w. lookahead | 15 ms   | 0.034 ms |
-| Candidate-checking      | 21 ms   | 0.050 ms |
-| Place-finding           | 74 ms   | 0.067 ms |
-| Crook's Algorithm       | 4.5 ms  |          |
-
-Crook's Algorithm is not yet implemented in C.
+| Bruteforce w. lookahead | 14.9 ms | 0.033 ms |
+| Candidate-checking      | 23.3 ms | 0.054 ms |
+| Place-finding           | 74.7 ms | 0.071 ms |
+| Crook's Algorithm       | 4.3 ms  | 0.149 ms |
 
 ## Accuracy
 Average number of tries per empty cell:
 | Algorithm               | Avg. tries |
 |-------------------------|------------|
 | Bruteforce              | 9.0        |
-| Bruteforce w. lookahead | 2.7        |
+| Bruteforce w. lookahead | 3.0        |
 | Candidate-checking      | 1.0        |
 | Place-finding           | 1.0        |
 | Crook's Algorithm       | 1.0        |
@@ -69,7 +67,7 @@ Percentage of sudokus solved:
 | Bruteforce w. lookahead | 100.0000%      |
 | Candidate-checking      | 99.9663%       |
 | Place-finding           | 58.8468%       |
-| Crook's Algorithm       |                |
+| Crook's Algorithm       | 100.000%       |
 
 This is equivalent to candidate checking not being able to solve 337 out of the 1.000.000 sudokus in the Kaggle-dataset.
 

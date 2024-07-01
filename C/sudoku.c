@@ -75,4 +75,24 @@ void PrintSudoku(int (*sudoku)[SIZE][SIZE]) {
         }
         printf("\n");
     }
+    printf("\n");
+}
+
+void PrintMarkup(int (*sudokuMarkup)[SIZE][SIZE][SIZE]){
+    printf("\n");
+    for (int i = 0; i < SIZE; i++){
+        for (int j = 0; j < SIZE; j++){
+            for (int k = 0; k < SIZE; k++){
+                if ((*sudokuMarkup)[i][j][k] == 1) {
+                    printf("%d", k + 1);
+                }
+                else {
+                    printf(" ");
+                }
+            }
+            printf("|");
+        }
+        printf("\n");
+    }
+    printf("\n");
 }
