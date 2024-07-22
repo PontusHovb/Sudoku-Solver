@@ -13,24 +13,29 @@ class Sudoku:
         for r, row in enumerate(self.puzzle):
             if r in [3, 6]:
                 print('------+-------+------')
+
             for c, value in enumerate(row):
                 if c in [3, 6]:
                     print('|', end=' ')
-                print(value, end=' ')
+                print(' ' if value is None else value, end=' ')
 
             print('\n', end='')
+        
+        return ''
             
     def solve(self, method, show_gui):
-        if show_gui:
-            self.gui = GUI(self.puzzle, method)
-        else:
-            self.gui = False
+        cells_to_solve = self.unsolved_cells
+        self.gui = GUI(self.puzzle, method) if show_gui else False
+
+        if self.gui: self.gui.run(5)
 
         match method:
             case "bruteforce":                               
                 self.bruteforce(self.puzzle, self.unsolved_cells, self.gui)
-            case "bruteforce_lookahead":
-                self.bruteforce_lookahead(self.puzzle, self.unsolved_cells, self.gui)
+            case "backtracking":
+                self.backtracking(self.puzzle, self.unsolved_cells, self.gui)
+            case "backtracking_easiest_first":
+                self.backtracking_easiest_first(self.puzzle, self.unsolved_cells, self.gui)
             case "candidate_checking":
                 self.candidate_checking(self.puzzle, self.unsolved_cells, self.gui)
             case "place_finding":
@@ -39,6 +44,8 @@ class Sudoku:
                 self.crooks_algorithm(self.puzzle, self.unsolved_cells, self.gui)
             case _:
                 print("Enter valid algorithm")
+
+        if self.gui: self.gui.display_correct_solution(cells_to_solve, self.puzzle, 0.5)
 
         return self.tries, self.no_unsolved_cells
     
@@ -49,7 +56,7 @@ class Sudoku:
         unsolved_cells = list()
         for r, row in enumerate(puzzle):
             for c, cell in enumerate(row):
-                if cell == 0:
+                if cell == None:
                     unsolved_cells.append((r, c))
         
         return unsolved_cells
@@ -75,17 +82,17 @@ class Sudoku:
     def is_only_possible_location(self, puzzle, empty_cell, guess, check_type):
         if check_type == "row":
             for c in range(9):
-                if puzzle[empty_cell[0]][c] == 0 and c != empty_cell[1] and self.valid_guess(empty_cell[0], c, guess, puzzle):
+                if puzzle[empty_cell[0]][c] == None and c != empty_cell[1] and self.valid_guess(empty_cell[0], c, guess, puzzle):
                     return False
         elif check_type == "column":
             for r in range(9):
-                if puzzle[r][empty_cell[1]] == 0 and r != empty_cell[0] and self.valid_guess(r, empty_cell[1], guess, puzzle):
+                if puzzle[r][empty_cell[1]] == None and r != empty_cell[0] and self.valid_guess(r, empty_cell[1], guess, puzzle):
                     return False
         elif check_type == "box":
             start_row, start_col = 3 * (empty_cell[0] // 3), 3 * (empty_cell[1] // 3)
             for r in range(start_row, start_row + 3):
                 for c in range(start_col, start_col + 3):
-                    if puzzle[r][c] == 0 and not (r == empty_cell[0] and c == empty_cell[1]) and self.valid_guess(r, c, guess, puzzle):
+                    if puzzle[r][c] == None and not (r == empty_cell[0] and c == empty_cell[1]) and self.valid_guess(r, c, guess, puzzle):
                         return False
         else:
             return False
@@ -170,11 +177,11 @@ class Sudoku:
                 return True
             
             if gui: gui.erase_number(empty_cells[0][0],empty_cells[0][1]) 
-            puzzle[empty_cells[0][0]][empty_cells[0][1]] = 0                    # Backtrack if guess don't yield solution
+            puzzle[empty_cells[0][0]][empty_cells[0][1]] = None                 # Backtrack if guess don't yield solution
 
         return False
     
-    def bruteforce_lookahead(self, puzzle, empty_cells, gui):
+    def backtracking(self, puzzle, empty_cells, gui):
         if len(empty_cells) == 0:                                     
             return True if self.correct_solution() else False
 
@@ -185,13 +192,22 @@ class Sudoku:
                 puzzle[empty_cells[0][0]][empty_cells[0][1]] = guess
                 self.tries += 1
 
-                if self.bruteforce_lookahead(puzzle, empty_cells[1:], gui):     # Recursive solving
+                if self.backtracking(puzzle, empty_cells[1:], gui):     # Recursive solving
                     return True
 
                 if gui: gui.erase_number(empty_cells[0][0],empty_cells[0][1]) 
                 puzzle[empty_cells[0][0]][empty_cells[0][1]] = 0                # Backtrack if guess don't yield solution
 
         return False
+    
+    def backtracking_easiest_first(self, puzzle, empty_cells, gui):
+        for i, empty_cell in enumerate(empty_cells):
+            empty_cells[i] = empty_cells[i] + (len(self.get_candidates(puzzle, empty_cell[0], empty_cell[1])), )
+
+        # Sort based on number of possible values per cell
+        empty_cells.sort(key=lambda x: x[2])
+        
+        return self.backtracking(puzzle, empty_cells, gui)
 
     def candidate_checking(self, puzzle, empty_cells, gui):
         if len(empty_cells) == 0:                                               # puzzle solved if there are no more empty cells left
@@ -206,7 +222,7 @@ class Sudoku:
                     possible_values += 1
 
             if possible_values == 1:                                            # If there is only one candidate for empty cell
-                if gui: gui.add_number(empty_cell[0], empty_cell[1], possible_guess)
+                if gui: gui.add_number(empty_cell[0], empty_cell[1], possible_guess, certain=True)
                 puzzle[empty_cell[0]][empty_cell[1]] = possible_guess
                 self.tries += 1
                 empty_cells.remove(empty_cell)
@@ -226,7 +242,7 @@ class Sudoku:
                         self.is_only_possible_location(puzzle, empty_cell, guess, "column") or
                         self.is_only_possible_location(puzzle, empty_cell, guess, "box")):
                         
-                        if gui: gui.add_number(empty_cell[0], empty_cell[1], guess)
+                        if gui: gui.add_number(empty_cell[0], empty_cell[1], guess, certain=True)
                         puzzle[empty_cell[0]][empty_cell[1]] = guess
                         self.tries += 1
                         empty_cells.remove(empty_cell)
@@ -261,7 +277,7 @@ class Sudoku:
                         self.tries += 1
                         if gui: 
                             gui.show_number(r, c, list(markup)[0])
-                            gui.add_number(r, c, list(markup)[0])
+                            gui.add_number(r, c, list(markup)[0], certain=True)
 
         if changes_made>0:
             return self.crooks_algorithm_solve(puzzle, sudoku_markup, gui, i+1)

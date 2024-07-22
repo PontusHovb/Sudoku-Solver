@@ -6,10 +6,16 @@
 In the bruteforce method, a guess is performed for each empty cell until all cells are filled. If sudoku is not correctly solved a new guess for the last empty cell is performed. This is an algorithm which is easy to implement but computationally inefficient.
 <br clear="all"/>
 
-## Bruteforce with look ahead (backtracking method)
-<img align="left" width="250" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs%20%26%20Graphs/bruteforce_lookahead.gif"/>
+## Backtracking method
+<img align="left" width="250" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs%20%26%20Graphs/backtracking.gif"/>
 <img align="left" width="50" src="https://github.com/PontusHovb/Sudoku/assets/67122081/5818307d-976f-4cfc-9ad9-cf1ef711ceb1"/>
 An improvement to the bruteforce method can be done with the backtracking method where a guess (1-9) is performed for the first cell. If the guess is valid (does not violate sudoku-condition (same number is already in row, column and box)) then the function calls itself recursively with the remaining unsolved cells. This method can solve all solvable sudokus but often requires a lot of wrong tries before reaching the correct solution.
+<br clear="all"/>
+
+## Backtracking method (easiest first)
+<img align="left" width="250" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs%20%26%20Graphs/backtracking_easiest_first.gif"/>
+<img align="left" width="50" src="https://github.com/PontusHovb/Sudoku/assets/67122081/5818307d-976f-4cfc-9ad9-cf1ef711ceb1"/>
+To improve accuracy for the backtracking method, an improvement of the order it solves empty cells can be made. Instead of going from top-left to bottom-right, the backtracking method (easiest first) orders empty cells based on number of candidates. With this, cells with most possibilites (and with that risk of guessing wrong) are saved to last. This method is >50% faster than the traditionally backtracking method by improving accuracy (avg tries per empty cells) from 2.9 to 1.9.
 <br clear="all"/>
 
 ## Candidate-checking method
@@ -43,35 +49,38 @@ The algorithms are tested by solving 100 random sudokus each iteration and the t
 <img width="350" src="https://github.com/PontusHovb/Sudoku/blob/master/GIFs%20%26%20Graphs/average_time.png"/>
 
 Exact times both in Python and C:
-| Algorithm               | Python  | C        |
-|-------------------------|---------|----------|
-| Bruteforce              | -       | -        |
-| Bruteforce w. lookahead | 14.9 ms | 0.033 ms |
-| Candidate-checking      | 23.3 ms | 0.054 ms |
-| Place-finding           | 82.3 ms | 0.071 ms |
-| Crook's Algorithm       | 4.3 ms  | 0.149 ms |
+| Algorithm                    | Python  | C        |
+|------------------------------|---------|----------|
+| Bruteforce                   | -       | -        |
+| Backtracking                 | 14.9 ms | 0.033 ms |
+| Backtracking (easiest first) | 6.6 ms  |          |
+| Candidate-checking           | 23.3 ms | 0.054 ms |
+| Place-finding                | 82.3 ms | 0.071 ms |
+| Crook's Algorithm            | 4.3 ms  | 0.149 ms |
 
 Bruteforce is considerable slower than the other algorithms, and can't be tested in a reasonable time.
 
 ## Accuracy
 Average number of tries per empty cell:
-| Algorithm               | Avg. tries |
-|-------------------------|------------|
-| Bruteforce              | 8.9        |
-| Bruteforce w. lookahead | 3.0        |
-| Candidate-checking      | 1.0        |
-| Place-finding           | 1.0        |
-| Crook's Algorithm       | 1.0        |
+| Algorithm                     | Avg. tries |
+|-------------------------------|------------|
+| Bruteforce                    | 8.9        |
+| Backtracking                  | 2.9        |
+| Backtracking (easiest first)  | 1.9        |
+| Candidate-checking            | 1.0        |
+| Place-finding                 | 1.0        |
+| Crook's Algorithm             | 1.0        |
 
 ## Solving ability
 Percentage of sudokus solved:
-| Algorithm               | Sudokus solved |
-|-------------------------|----------------|
-| Bruteforce              | 100.0000%      |
-| Bruteforce w. lookahead | 100.0000%      |
-| Candidate-checking      | 99.9663%       |
-| Place-finding           | 58.8468%       |
-| Crook's Algorithm       | 100.000%       |
+| Algorithm                    | Sudokus solved |
+|------------------------------|----------------|
+| Bruteforce                   | 100.00%        |
+| Backtracking                 | 100.00%        |
+| Backtracking (easiest first) | 100.00%        |
+| Candidate-checking           | 99.96%         |
+| Place-finding                | 58.85%         |
+| Crook's Algorithm            | 100.00%        |
 
 This is equivalent to candidate checking not being able to solve 337 out of the 1.000.000 sudokus in the Kaggle-dataset.
 

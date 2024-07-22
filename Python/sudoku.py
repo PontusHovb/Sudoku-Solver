@@ -4,15 +4,15 @@ import random
 import sys
 from solver import Sudoku
 
-FILENAME = "../Data/sudoku.csv"
-SHOW_GUI = False
-NO_PUZZLES = 100
+FILENAME = "../Data/show_sudoku.csv"
+SHOW_GUI = True
+NO_PUZZLES = 1
 SIZE = 9
  
 # Read puzzles from csv-file
 def read_puzzles(filename, no_puzzles):
-    puzzles = np.zeros((no_puzzles, SIZE*SIZE), np.int32)
-    solutions = np.zeros((no_puzzles, SIZE*SIZE), np.int32)
+    puzzles = np.full((no_puzzles, SIZE * SIZE), None, dtype=object)
+    solutions = np.full((no_puzzles, SIZE * SIZE), None, dtype=object)
 
     with open(filename, 'r') as csv_file:
         all_sudokus = csv_file.read().splitlines()
@@ -24,8 +24,8 @@ def read_puzzles(filename, no_puzzles):
         puzzle, solution = line.split(",")
         for j, q_s in enumerate(zip(puzzle, solution)):
             q, s = q_s
-            puzzles[i, j] = q
-            solutions[i, j] = s
+            puzzles[i, j] = int(q) if q != '0' else None
+            solutions[i, j] = int(s) if s != '0' else None
 
     puzzles = puzzles.reshape((-1, SIZE, SIZE))
     solutions = solutions.reshape((-1, SIZE, SIZE))
